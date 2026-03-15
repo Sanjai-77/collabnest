@@ -50,14 +50,13 @@ export default function JoinRequestsPage() {
 
   const fetchAll = async () => {
     setLoading(true);
-    const token = localStorage.getItem('token');
     try {
       const [incomingRes, sentRes] = await Promise.all([
-        fetch('http://localhost:5000/api/join-requests', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/join-requests/my', { headers: { Authorization: `Bearer ${token}` } }),
+        api.get('/join-requests'),
+        api.get('/join-requests/my'),
       ]);
-      if (incomingRes.ok) setIncoming(await incomingRes.json());
-      if (sentRes.ok) setSent(await sentRes.json());
+      setIncoming(incomingRes.data);
+      setSent(sentRes.data);
     } catch (error) {
       console.error('Failed to fetch join requests:', error);
       message.error('Could not load join requests');
@@ -68,25 +67,12 @@ export default function JoinRequestsPage() {
 
   const handleAction = async (id, status) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/join-requests/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ status })
-      });
-
-      if (res.ok) {
-        message.success(`Request ${status} successfully`);
-        setIncoming(prev => prev.filter(req => req._id !== id));
-      } else {
-        const data = await res.json();
-        message.error(data.message || `Failed to ${status} request`);
-      }
+      await api.put(`/join-requests/${id}`, { status });
+      message.success(`Request ${status} successfully`);
+      setIncoming(prev => prev.filter(req => req._id !== id));
     } catch (err) {
       console.error(err);
-      message.error('Server error');
+      message.error(err.response?.data?.message || `Failed to ${status} request`);
     }
   };
 

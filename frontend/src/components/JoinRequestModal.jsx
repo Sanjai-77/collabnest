@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { Modal, Form, Input, Upload, Button, message } from 'antd';
 import { GithubOutlined, UploadOutlined } from '@ant-design/icons';
+import api from '../config/api';
 
 const { TextArea } = Input;
 
@@ -8,36 +7,25 @@ export default function JoinRequestModal({ open, onClose, projectId }) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
     form.validateFields().then(async (values) => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:5000/api/projects/${projectId}/join`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(values),
-        });
-        
-        const data = await res.json();
-        if (res.ok) {
-          message.success('Join request submitted successfully!');
-          form.resetFields();
-          onClose();
-        } else {
-          message.error(data.message || 'Failed to submit request');
+        const payload = { ...values };
+        if (payload.resume && Array.isArray(payload.resume) && payload.resume.length > 0) {
+          payload.resume = payload.resume[0].name || payload.resume[0].url || '';
         }
+        
+        await api.post(`/projects/${projectId}/join`, payload);
+        message.success('Join request submitted successfully!');
+        form.resetFields();
+        onClose();
       } catch (err) {
         console.error(err);
-        message.error('Server error');
+        message.error(err.response?.data?.message || 'Failed to submit request');
       } finally {
         setLoading(false);
       }
     });
-  };
 
   return (
     <Modal

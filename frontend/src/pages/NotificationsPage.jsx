@@ -1,20 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Button, Empty, Spin, Badge, Tag, Typography, Avatar } from 'antd';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Bell, 
-  UserPlus, 
-  CheckCircle2, 
-  XCircle, 
-  Layout, 
-  MessageSquare,
-  CheckCheck
-} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import io from 'socket.io-client';
-
-const { Title, Text } = Typography;
-const socket = io('http://localhost:5000');
+import api from '../config/api';
+import socket from '../config/socket';
 
 const TYPE_CONFIG = {
   join_request:     { icon: <UserPlus size={18} />,       color: 'blue',   label: 'Join Request' },
@@ -57,13 +43,8 @@ export default function NotificationsPage() {
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/notifications', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        setNotifications(await res.json());
-      }
+      const res = await api.get('/notifications');
+      setNotifications(res.data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -73,20 +54,21 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     fetchNotifications();
+    if (!socket.connected) {
+      socket.connect();
+    }
     socket.emit('join_user_room', user._id);
     socket.on('new_notification', (notification) => {
       setNotifications(prev => [notification, ...prev]);
     });
-    return () => socket.off('new_notification');
+    return () => {
+      socket.off('new_notification');
+    };
   }, [fetchNotifications, user._id]);
 
   const markAllRead = async () => {
     try {
-      const token = localStorage.getItem('token');
-      await fetch('http://localhost:5000/api/notifications/read-all', {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.put('/notifications/read-all');
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     } catch (err) {
       console.error(err);
@@ -95,11 +77,7 @@ export default function NotificationsPage() {
 
   const markOneRead = async (id) => {
     try {
-      const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/api/notifications/${id}/read`, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.put(`/notifications/${id}/read`);
       setNotifications(prev => prev.map(n => n._id === id ? { ...n, read: true } : n));
     } catch (err) {
       console.error(err);

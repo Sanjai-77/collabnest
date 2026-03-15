@@ -1,9 +1,10 @@
 import { Form, Input, Button, Checkbox, message, Typography } from 'antd';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Rocket, ArrowRight } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import GoogleLoginButton from '../components/GoogleLoginButton';
+import api from '../config/api';
 
 const { Title, Text } = Typography;
 
@@ -29,24 +30,14 @@ export default function LoginPage() {
   const onFinish = async (values) => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: values.email, password: values.password }),
-      });
-      const data = await res.json();
-      
-      if (res.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        message.success('Login successful!');
-        navigate('/dashboard');
-      } else {
-        message.error(data.message || 'Login failed');
-      }
+      const res = await api.post('/auth/login', { email: values.email, password: values.password });
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      message.success('Login successful!');
+      navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      message.error('Server error, please try again later');
+      message.error(error.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
     }

@@ -15,6 +15,7 @@ import {
   Camera,
   Phone
 } from 'lucide-react';
+import api from '../config/api';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -47,19 +48,9 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-        const res = await fetch('http://localhost:5000/api/auth/profile', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setProfile(data);
-          localStorage.setItem('user', JSON.stringify(data));
-        } else {
-          const userStr = localStorage.getItem('user');
-          if (userStr) setProfile(JSON.parse(userStr));
-        }
+        const res = await api.get('/auth/profile');
+        setProfile(res.data);
+        localStorage.setItem('user', JSON.stringify(res.data));
       } catch (err) {
         const userStr = localStorage.getItem('user');
         if (userStr) setProfile(JSON.parse(userStr));
@@ -77,7 +68,6 @@ export default function ProfilePage() {
   const handleSave = () => {
     form.validateFields().then(async (values) => {
       try {
-        const token = localStorage.getItem('token');
         const payload = { ...values };
         if (payload.resume && Array.isArray(payload.resume) && payload.resume.length > 0) {
           payload.resume = payload.resume[0].name || payload.resume[0].url || '';
@@ -85,29 +75,15 @@ export default function ProfilePage() {
           payload.resume = '';
         }
 
-        const res = await fetch('http://localhost:5000/api/auth/profile', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(payload),
-        });
-        
-        const data = await res.json();
-        
-        if (res.ok) {
-          message.success('Profile updated successfully!');
-          const newProfile = { ...profile, ...data };
-          setProfile(newProfile);
-          localStorage.setItem('user', JSON.stringify(newProfile));
-          setEditing(false);
-        } else {
-          message.error(data.message || 'Failed to update profile');
-        }
+        const res = await api.put('/auth/profile', payload);
+        message.success('Profile updated successfully!');
+        const newProfile = { ...profile, ...res.data };
+        setProfile(newProfile);
+        localStorage.setItem('user', JSON.stringify(newProfile));
+        setEditing(false);
       } catch (error) {
         console.error('Profile update error:', error);
-        message.error('Server error. Could not update profile.');
+        message.error(error.response?.data?.message || 'Failed to update profile');
       }
     });
   };

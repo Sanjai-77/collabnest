@@ -26,4 +26,9 @@ const messageSchema = new mongoose.Schema(
   }
 );
 
+// Indexes for production performance
+messageSchema.index({ projectId: 1 });
+messageSchema.index({ senderId: 1 });
+messageSchema.index({ createdAt: 1 });
+
 module.exports = mongoose.model('Message', messageSchema);

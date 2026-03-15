@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Rocket, Users, Info, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import api from '../config/api';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -35,26 +36,12 @@ export default function CreateProjectPage() {
   const onFinish = async (values) => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/projects', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(values),
-      });
-      const data = await res.json();
-      
-      if (res.ok) {
-        message.success('Project created successfully!');
-        navigate('/dashboard/projects');
-      } else {
-        message.error(data.message || 'Failed to create project');
-      }
+      await api.post('/projects', values);
+      message.success('Project created successfully!');
+      navigate('/dashboard/projects');
     } catch (error) {
       console.error('Create project error:', error);
-      message.error('Server error, please try again later');
+      message.error(error.response?.data?.message || 'Failed to create project');
     } finally {
       setLoading(false);
     }

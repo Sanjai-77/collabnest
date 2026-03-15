@@ -1,18 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Card, Tag, Avatar, Input, Select, Button, Spin, Typography, Space, Badge } from 'antd';
-import { motion } from 'framer-motion';
-import { 
-  Search, 
-  Plus, 
-  Users, 
-  User, 
-  ArrowRight, 
-  Filter, 
-  Compass,
-  Zap,
-  Briefcase
-} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import api from '../config/api';
 
 const { Text, Title, Paragraph } = Typography;
 
@@ -47,11 +34,8 @@ export default function ProjectsPage() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/projects');
-        if (res.ok) {
-          const data = await res.json();
-          setProjects(data);
-        }
+        const res = await api.get('/projects');
+        setProjects(res.data);
       } catch (error) {
         console.error('Failed to fetch projects:', error);
       } finally {

@@ -1,18 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Card, Tag, Avatar, Button, Empty, Spin, Typography, Space, Badge } from 'antd';
-import { motion } from 'framer-motion';
-import { 
-  Users, 
-  User, 
-  Layout, 
-  ArrowRight, 
-  Rocket, 
-  Plus, 
-  Briefcase,
-  Terminal,
-  ExternalLink
-} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import api from '../config/api';
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -44,19 +31,8 @@ export default function MyProjectsPage() {
   useEffect(() => {
     const fetchMyProjects = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-        
-        const res = await fetch('http://localhost:5000/api/projects/my', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (res.ok) {
-          const myProjects = await res.json();
-          setProjects(myProjects);
-        }
+        const res = await api.get('/projects/my');
+        setProjects(res.data);
       } catch (error) {
         console.error('Failed to fetch my projects:', error);
       } finally {

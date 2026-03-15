@@ -1,11 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { Input, Button, Empty, Avatar, Spin, Typography } from 'antd';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Send, User, MessageSquare } from 'lucide-react';
-import io from 'socket.io-client';
-
-const { Text } = Typography;
-const socket = io('http://localhost:5000');
+import api from '../config/api';
+import socket from '../config/socket';
 
 export default function ChatInterface({ projectId, onNewMessage }) {
   const [messages, setMessages] = useState([]);
@@ -22,14 +17,8 @@ export default function ChatInterface({ projectId, onNewMessage }) {
     if (projectId) {
       const fetchMessages = async () => {
         try {
-          const token = localStorage.getItem('token');
-          const res = await fetch(`http://localhost:5000/api/messages/${projectId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setMessages(data);
-          }
+          const res = await api.get(`/messages/${projectId}`);
+          setMessages(res.data);
         } catch (err) {
           console.error('Failed to fetch messages:', err);
         } finally {

@@ -1,15 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Card, Timeline, Empty, Typography, Row, Col, Button } from 'antd';
-import { motion } from 'framer-motion';
-import { 
-  FolderRoot, 
-  CheckCircle2, 
-  Clock, 
-  UserPlus, 
-  TrendingUp, 
-  Activity,
-  ArrowUpRight
-} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import api from '../config/api';
 
 const { Title, Text } = Typography;
 
@@ -40,14 +30,8 @@ export default function DashboardHome() {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/dashboard/stats', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      setStatsData(data);
+      const res = await api.get('/dashboard/stats');
+      setStatsData(res.data);
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     }
@@ -55,14 +39,8 @@ export default function DashboardHome() {
 
   const fetchActivities = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/activities', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      setActivities(data);
+      const res = await api.get('/activities');
+      setActivities(res.data);
     } catch (error) {
       console.error('Error fetching activities:', error);
     }

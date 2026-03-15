@@ -1,8 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Card, Button, Input, Modal, Form, Select, Tag, Spin, message, Empty, Typography, Avatar, Tooltip, DatePicker } from 'antd';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, User, Clock, MoreVertical, Layout as LayoutIcon, CheckCircle2, Circle, Loader2, Calendar } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import api from '../config/api';
 
 const { Text, Title } = Typography;
 
@@ -28,14 +25,8 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
 
   const fetchTasks = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/tasks/${projectId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setTasks(data);
-      }
+      const res = await api.get(`/tasks/${projectId}`);
+      setTasks(res.data);
     } catch (err) {
       console.error(err);
       message.error('Failed to load tasks');
@@ -46,35 +37,23 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
 
   const handleAcceptTask = async (taskId) => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/tasks/${taskId}/accept`, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        message.success('Task accepted');
-        fetchTasks();
-      }
+      await api.put(`/tasks/${taskId}/accept`);
+      message.success('Task accepted');
+      fetchTasks();
     } catch (err) {
       console.error(err);
-      message.error('Failed to accept task');
+      message.error(err.response?.data?.message || 'Failed to accept task');
     }
   };
 
   const handleCompleteTask = async (taskId) => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/tasks/${taskId}/complete`, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        message.success('Task marked as completed');
-        fetchTasks();
-      }
+      await api.put(`/tasks/${taskId}/complete`);
+      message.success('Task marked as completed');
+      fetchTasks();
     } catch (err) {
       console.error(err);
-      message.error('Failed to complete task');
+      message.error(err.response?.data?.message || 'Failed to complete task');
     }
   };
 
@@ -91,20 +70,10 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
     setTasks(tasks.map(t => t._id === taskId ? { ...t, status: newStatus } : t));
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ status: newStatus })
-      });
-
-      if (!res.ok) throw new Error('Failed to update task');
+      await api.put(`/tasks/${taskId}`, { status: newStatus });
     } catch (err) {
       console.error(err);
-      message.error('Failed to update task status');
+      message.error(err.response?.data?.message || 'Failed to update task status');
       setTasks(originalTasks);
     }
   };
@@ -112,25 +81,14 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
   const handleCreateTask = async (values) => {
     try {
       setSubmitting(true);
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/tasks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ ...values, projectId })
-      });
-
-      if (res.ok) {
-        message.success('Task created successfully');
-        form.resetFields();
-        setIsModalOpen(false);
-        fetchTasks();
-      }
+      await api.post('/tasks', { ...values, projectId });
+      message.success('Task created successfully');
+      form.resetFields();
+      setIsModalOpen(false);
+      fetchTasks();
     } catch (err) {
       console.error(err);
-      message.error('Failed to create task');
+      message.error(err.response?.data?.message || 'Failed to create task');
     } finally {
       setSubmitting(false);
     }

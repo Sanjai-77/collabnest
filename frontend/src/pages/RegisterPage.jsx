@@ -1,9 +1,10 @@
 import { Form, Input, Button, Select, Upload, message, Typography } from 'antd';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, Github, UploadCloud, Rocket, ArrowRight } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import GoogleLoginButton from '../components/GoogleLoginButton';
+import api from '../config/api';
 
 const { Title, Text } = Typography;
 
@@ -35,26 +36,16 @@ export default function RegisterPage() {
   const onFinish = async (values) => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          username: values.username, 
-          email: values.email, 
-          password: values.password,
-        }),
+      await api.post('/auth/register', { 
+        username: values.username, 
+        email: values.email, 
+        password: values.password,
       });
-      const data = await res.json();
-      
-      if (res.ok) {
-        message.success('Registration successful! Please log in.');
-        navigate('/login');
-      } else {
-        message.error(data.message || 'Registration failed');
-      }
+      message.success('Registration successful! Please log in.');
+      navigate('/login');
     } catch (error) {
       console.error('Registration error:', error);
-      message.error('Server error, please try again later');
+      message.error(error.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }

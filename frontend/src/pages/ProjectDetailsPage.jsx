@@ -1,22 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Card, Tag, Avatar, Button, Descriptions, List, message, Spin, Popconfirm, Typography, Space, Tooltip } from 'antd';
-import { motion } from 'framer-motion';
-import { 
-  ArrowLeft, 
-  Users, 
-  User, 
-  Edit3, 
-  Trash2, 
-  Clock, 
-  CheckCircle2, 
-  XCircle, 
-  Layout,
-  ArrowRight,
-  ExternalLink,
-  Target,
-  Rocket
-} from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import api from '../config/api';
 import JoinRequestModal from '../components/JoinRequestModal';
 import EditProjectModal from '../components/EditProjectModal';
 
@@ -59,11 +42,8 @@ export default function ProjectDetailsPage() {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/projects/${id}`);
-        if (res.ok) {
-          const data = await res.json();
-          setProject(data);
-        }
+        const res = await api.get(`/projects/${id}`);
+        setProject(res.data);
       } catch (error) {
         console.error('Failed to fetch project:', error);
       } finally {
@@ -73,16 +53,9 @@ export default function ProjectDetailsPage() {
 
     const fetchMyRequest = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-        const res = await fetch('http://localhost:5000/api/join-requests/my', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (res.ok) {
-          const allMyRequests = await res.json();
-          const found = allMyRequests.find(r => r.project?._id === id);
-          setMyRequest(found || null);
-        }
+        const res = await api.get('/join-requests/my');
+        const found = res.data.find(r => r.project?._id === id);
+        setMyRequest(found || null);
       } catch (error) {
         console.error('Failed to fetch my requests:', error);
       }
@@ -97,19 +70,12 @@ export default function ProjectDetailsPage() {
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/projects/${project._id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (res.ok) {
-        message.success('Project deleted');
-        navigate('/dashboard/projects');
-      } else {
-        message.error('Failed to delete project');
-      }
+      await api.delete(`/projects/${project._id}`);
+      message.success('Project deleted');
+      navigate('/dashboard/projects');
     } catch (err) {
       console.error(err);
-      message.error('Server error');
+      message.error(err.response?.data?.message || 'Failed to delete project');
     }
   };
 

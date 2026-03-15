@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import { Modal, Form, Input, InputNumber, Select, message } from 'antd';
+import api from '../config/api';
 
 const skillOptions = [
   'React', 'Node.js', 'Python', 'Java', 'C++', 'Machine Learning',
@@ -26,27 +26,13 @@ export default function EditProjectModal({ open, onClose, project, onSuccess }) 
     form.validateFields().then(async (values) => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('token');
-        const res = await fetch(`http://localhost:5000/api/projects/${project._id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(values),
-        });
-        
-        const data = await res.json();
-        if (res.ok) {
-          message.success('Project updated successfully');
-          onSuccess(data);
-          onClose();
-        } else {
-          message.error(data.message || 'Failed to update project');
-        }
+        const res = await api.put(`/projects/${project._id}`, values);
+        message.success('Project updated successfully');
+        onSuccess(res.data);
+        onClose();
       } catch (err) {
         console.error(err);
-        message.error('Server error');
+        message.error(err.response?.data?.message || 'Failed to update project');
       } finally {
         setLoading(false);
       }

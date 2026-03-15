@@ -15,6 +15,7 @@ import {
 import { Button } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../config/api';
 import TaskBoard from '../components/TaskBoard';
 import ChatInterface from '../components/ChatInterface';
 import MembersTable from '../components/MembersTable';
@@ -37,23 +38,21 @@ export default function WorkspacePage() {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/projects/${id}`);
-        if (res.ok) {
-          const data = await res.json();
-          // Access Control: Redirect if not leader and not a member
-          const currentUserId = String(currentUser._id);
-          const projectCreatorId = String(data.createdBy?._id || data.createdBy);
-          const memberIds = (data.members || []).map(m => String(m._id || m));
-          
-          const isUserInMembers = memberIds.includes(currentUserId) || projectCreatorId === currentUserId;
-          
-          if (!isUserInMembers) {
-            message.warning('You are no longer a member of this project');
-            navigate('/dashboard/projects');
-            return;
-          }
-          setProject(data);
+        const res = await api.get(`/projects/${id}`);
+        const data = res.data;
+        // Access Control: Redirect if not leader and not a member
+        const currentUserId = String(currentUser._id);
+        const projectCreatorId = String(data.createdBy?._id || data.createdBy);
+        const memberIds = (data.members || []).map(m => String(m._id || m));
+        
+        const isUserInMembers = memberIds.includes(currentUserId) || projectCreatorId === currentUserId;
+        
+        if (!isUserInMembers) {
+          message.warning('You are no longer a member of this project');
+          navigate('/dashboard/projects');
+          return;
         }
+        setProject(data);
       } catch (error) {
         console.error('Failed to fetch project:', error);
       } finally {
@@ -72,40 +71,23 @@ export default function WorkspacePage() {
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/projects/${project._id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (res.ok) {
-        message.success('Project deleted');
-        navigate('/dashboard/projects');
-      } else {
-        message.error('Failed to delete project');
-      }
+      await api.delete(`/projects/${project._id}`);
+      message.success('Project deleted');
+      navigate('/dashboard/projects');
     } catch (err) {
       console.error(err);
-      message.error('Server error');
+      message.error(err.response?.data?.message || 'Failed to delete project');
     }
   };
 
   const handleRemoveMember = async (userId) => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5000/api/projects/${id}/members/${userId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const updatedProject = await res.json();
-        setProject(updatedProject);
-        message.success('Member removed successfully');
-      } else {
-        const err = await res.json();
-        message.error(err.message || 'Failed to remove member');
-      }
+      const res = await api.delete(`/projects/${id}/members/${userId}`);
+      setProject(res.data);
+      message.success('Member removed successfully');
     } catch (error) {
       console.error('Error removing member:', error);
-      message.error('Server error');
+      message.error(error.response?.data?.message || 'Failed to remove member');
     }
   };
 

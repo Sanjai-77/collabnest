@@ -35,4 +35,10 @@ const activitySchema = new mongoose.Schema(
   }
 );
 
+// Indexes for production performance
+activitySchema.index({ userId: 1 });
+activitySchema.index({ projectId: 1 });
+activitySchema.index({ createdAt: -1 });
+activitySchema.index({ type: 1 });
+
 module.exports = mongoose.model('Activity', activitySchema);

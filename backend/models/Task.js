@@ -38,4 +38,11 @@ const taskSchema = new mongoose.Schema(
   }
 );
 
+// Indexes for production performance
+taskSchema.index({ projectId: 1 });
+taskSchema.index({ assignedTo: 1 });
+taskSchema.index({ assignedBy: 1 });
+taskSchema.index({ status: 1 });
+taskSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Task', taskSchema);

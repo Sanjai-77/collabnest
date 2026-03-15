@@ -3,6 +3,9 @@ dotenv.config();
 
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 
 const http = require('http');
@@ -46,11 +49,39 @@ const io = new Server(server, {
 // Export io for use in controllers
 module.exports.io = io;
 
+// Security Middleware
+app.use(helmet());
+app.use(compression());
+
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: { message: 'Too many requests from this IP, please try again after 15 minutes' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply limiter to all API routes
+app.use('/api/', limiter);
+
 // Middleware
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://collabnest-obfx.vercel.app'
+];
+
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -132,15 +163,24 @@ app.use('/api/activities', require('./routes/activityRoutes'));
 
 
 // Message History Endpoint
-app.get('/api/messages/:projectId', async (req, res) => {
+app.get('/api/messages/:projectId', async (req, res, next) => {
   try {
     const messages = await Message.find({ projectId: req.params.projectId })
       .populate('senderId', 'username avatar')
       .sort({ createdAt: 1 });
     res.json(messages);
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    next(err);
   }
+});
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(`[ERROR] ${new Date().toISOString()}:`, err.stack);
+  res.status(err.status || 500).json({
+    message: err.message || 'Internal Server Error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+  });
 });
 
 const PORT = process.env.PORT || 5000;

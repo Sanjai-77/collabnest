@@ -1,25 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { Layout, Menu, Avatar, Badge, Input, Dropdown, notification, Popover, List, Typography, Button, Switch } from 'antd';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  LayoutDashboard,
-  Briefcase,
-  FolderOpen,
-  UserCheck,
-  Bell,
-  User,
-  Search,
-  LogOut,
-  Settings,
-  Rocket,
-  ChevronLeft,
-  Menu as MenuIcon,
-  Sun,
-  Moon,
-} from 'lucide-react';
-import io from 'socket.io-client';
 import { useTheme } from '../components/ThemeContext';
+import api from '../config/api';
+import socket from '../config/socket';
 
 const { Sider, Header, Content } = Layout;
 
@@ -57,7 +38,7 @@ export default function DashboardLayout() {
     }
 
     return () => {
-      if (socketRef.current) socketRef.current.disconnect();
+      socket.disconnect();
     };
   }, [navigate]);
 
@@ -69,15 +50,8 @@ export default function DashboardLayout() {
 
   const fetchUnreadCount = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-      const res = await fetch('http://localhost:5000/api/notifications/unread-count', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const { count } = await res.json();
-        setUnreadCount(count);
-      }
+      const res = await api.get('/notifications/unread-count');
+      setUnreadCount(res.data.count);
     } catch (err) {
       console.error('Failed to fetch unread count:', err);
     }
@@ -85,23 +59,17 @@ export default function DashboardLayout() {
 
   const fetchRecentNotifications = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-      const res = await fetch('http://localhost:5000/api/notifications', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const notifs = await res.json();
-        setNotificationsList(notifs.slice(0, 5));
-      }
+      const res = await api.get('/notifications');
+      setNotificationsList(res.data.slice(0, 5));
     } catch (err) {
       console.error('Failed to fetch notifications:', err);
     }
   };
 
   const setupSocket = (userId) => {
-    const socket = io('http://localhost:5000');
-    socketRef.current = socket;
+    if (!socket.connected) {
+      socket.connect();
+    }
 
     socket.on('connect', () => {
       socket.emit('join_user_room', userId);
@@ -121,7 +89,7 @@ export default function DashboardLayout() {
   };
 
   const handleLogout = () => {
-    if (socketRef.current) socketRef.current.disconnect();
+    socket.disconnect();
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/login');
@@ -132,14 +100,8 @@ export default function DashboardLayout() {
     if (newOpen && unreadCount > 0) {
       setUnreadCount(0);
       try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          await fetch('http://localhost:5000/api/notifications/read-all', {
-            method: 'PUT',
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setNotificationsList(prev => prev.map(n => ({ ...n, read: true })));
-        }
+        await api.put('/notifications/read-all');
+        setNotificationsList(prev => prev.map(n => ({ ...n, read: true })));
       } catch (err) {
         console.error('Failed to mark notifications as read:', err);
       }
