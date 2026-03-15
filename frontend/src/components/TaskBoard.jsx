@@ -1,3 +1,39 @@
+import { useState, useEffect, useCallback } from 'react';
+import { 
+  Button, 
+  Card, 
+  Tag, 
+  Avatar, 
+  Badge, 
+  Empty, 
+  Spin, 
+  Modal, 
+  Form, 
+  Input, 
+  Select, 
+  DatePicker, 
+  message, 
+  Popconfirm, 
+  Typography, 
+  Space,
+  Tooltip
+} from 'antd';
+import { 
+  Plus, 
+  Clock, 
+  AlertCircle, 
+  Calendar, 
+  User, 
+  CheckCircle2, 
+  ListTodo, 
+  ArrowRight, 
+  Trash2, 
+  Settings,
+  Circle,
+  Loader2,
+  MoreVertical
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import api from '../config/api';
 

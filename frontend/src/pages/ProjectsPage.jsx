@@ -1,3 +1,15 @@
+import { useState, useEffect } from 'react';
+import { Button, Input, Select, Card, Badge, Avatar, Tag, Spin, Typography, message } from 'antd';
+import { motion } from 'framer-motion';
+import { 
+  Compass, 
+  Plus, 
+  Search, 
+  Filter, 
+  User, 
+  Users, 
+  ArrowRight 
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 

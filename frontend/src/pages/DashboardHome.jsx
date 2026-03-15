@@ -1,3 +1,15 @@
+import { useState, useEffect } from 'react';
+import { Card, Row, Col, Typography, Button, Timeline, Empty } from 'antd';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  FolderRoot, 
+  Clock, 
+  CheckCircle2, 
+  UserPlus, 
+  ArrowUpRight, 
+  TrendingUp, 
+  Activity 
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 

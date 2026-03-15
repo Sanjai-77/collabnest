@@ -1,5 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Tabs, Tag, Card, Descriptions, Avatar, List, Spin, Popconfirm, message, Badge, Typography, Divider } from 'antd';
+import { 
+  Tabs, 
+  Tag, 
+  Card, 
+  Descriptions, 
+  Avatar, 
+  List, 
+  Spin, 
+  Popconfirm, 
+  message, 
+  Badge, 
+  Typography, 
+  Divider,
+  Button
+} from 'antd';
 import { 
   ChevronLeft, 
   Settings, 
@@ -12,7 +26,6 @@ import {
   Calendar,
   Layers
 } from 'lucide-react';
-import { Button } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../config/api';

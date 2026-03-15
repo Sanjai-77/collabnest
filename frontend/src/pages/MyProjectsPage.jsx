@@ -1,3 +1,14 @@
+import { useState, useEffect } from 'react';
+import { Card, Badge, Button, Tag, Avatar, Typography, Spin } from 'antd';
+import { motion } from 'framer-motion';
+import { 
+  Rocket, 
+  Plus, 
+  Briefcase, 
+  Terminal, 
+  Users, 
+  ExternalLink 
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 
