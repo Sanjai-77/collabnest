@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button, Empty, Spin, Badge, Tag, Typography, Avatar } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, 
@@ -101,7 +102,7 @@ export default function NotificationsPage() {
   if (loading) return (
     <div style={{ textAlign: 'center', padding: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
       <Spin size="large" />
-      <Text type="secondary">Fetching updates...</Text>
+      <MuiTypography color="text.secondary">Fetching updates...</MuiTypography>
     </div>
   );
 
@@ -110,7 +111,7 @@ export default function NotificationsPage() {
       <div className="page-header" style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div>
           <Title level={2} style={{ margin: 0 }}>Notifications</Title>
-          <Text type="secondary">Manage your project alerts and team updates.</Text>
+          <MuiTypography color="text.secondary">Manage your project alerts and team updates.</MuiTypography>
         </div>
         {unreadCount > 0 && (
           <Button 
@@ -138,7 +139,7 @@ export default function NotificationsPage() {
         >
           <Bell size={48} style={{ color: 'var(--text-muted)', marginBottom: 16, opacity: 0.2 }} />
           <Title level={4}>No notifications</Title>
-          <Text type="secondary">You're all caught up! New alerts will appear here.</Text>
+          <MuiTypography color="text.secondary">You're all caught up! New alerts will appear here.</MuiTypography>
         </motion.div>
       ) : (
         <motion.div 
@@ -201,17 +202,17 @@ export default function NotificationsPage() {
 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                      <Text strong={!n.read} style={{ fontSize: '14px' }}>
+                      <MuiTypography sx={{ fontSize: '14px', fontWeight: !n.read ? 600 : 400 }}>
                         {cfg.label}
-                      </Text>
-                      <Text type="secondary" style={{ fontSize: '12px' }}>• {timeAgo(n.createdAt)}</Text>
+                      </MuiTypography>
+                      <MuiTypography color="text.secondary" sx={{ fontSize: '12px' }}>• {timeAgo(n.createdAt)}</MuiTypography>
                     </div>
-                    <Text 
-                      type={n.read ? 'secondary' : 'primary'} 
-                      style={{ fontSize: '14px', lineHeight: 1.5, display: 'block' }}
+                    <MuiTypography 
+                      color={n.read ? 'text.secondary' : 'text.primary'} 
+                      sx={{ fontSize: '14px', lineHeight: 1.5, display: 'block' }}
                     >
                       {n.message}
-                    </Text>
+                    </MuiTypography>
                   </div>
 
                   {!n.read && <Badge dot style={{ backgroundColor: 'var(--primary)', marginTop: 8 }} />}

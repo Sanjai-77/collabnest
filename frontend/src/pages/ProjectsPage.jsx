@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button, Input, Select, Card, Badge, Avatar, Tag, Spin, Typography, message } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { 
   Compass, 
@@ -13,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 
-const { Text, Title, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 const tagColors = {
   React: 'blue', 'Node.js': 'green', Python: 'gold', 'Machine Learning': 'purple',
@@ -69,7 +70,7 @@ export default function ProjectsPage() {
       <div className="discovery-header-premium">
         <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
           <Title level={2} className="discovery-title"><Compass size={28} /> Explore Projects</Title>
-          <Text type="secondary" className="discovery-subtitle">Find your next big collaboration among amazing student projects.</Text>
+          <MuiTypography color="text.secondary" className="discovery-subtitle">Find your next big collaboration among amazing student projects.</MuiTypography>
         </motion.div>
         
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
@@ -108,7 +109,7 @@ export default function ProjectsPage() {
       {loading ? (
         <div className="loading-state-premium">
           <Spin size="large" />
-          <Text type="secondary">Curating your project feed...</Text>
+          <MuiTypography color="text.secondary">Curating your project feed...</MuiTypography>
         </div>
       ) : filteredProjects.length === 0 ? (
         <motion.div 
@@ -118,7 +119,7 @@ export default function ProjectsPage() {
         >
           <Compass size={64} className="empty-icon" />
           <Title level={4}>No projects matched your search</Title>
-          <Text type="secondary">Try broad terms or different skills to find more projects.</Text>
+          <MuiTypography color="text.secondary">Try broad terms or different skills to find more projects.</MuiTypography>
         </motion.div>
       ) : (
         <motion.div 
@@ -158,12 +159,12 @@ export default function ProjectsPage() {
                   <div className="card-footer-discovery">
                     <div className="author-info-lite">
                       <Avatar src={p.createdBy?.avatar} icon={<User size={12} />} className="author-avatar-lite" />
-                      <Text className="author-name-lite">{p.createdBy?.username || 'Collaborator'}</Text>
+                      <MuiTypography className="author-name-lite">{p.createdBy?.username || 'Collaborator'}</MuiTypography>
                     </div>
                     
                     <div className="team-stats-lite">
                       <Users size={14} />
-                      <Text>{p.members?.length || 0} / {p.teamSize}</Text>
+                      <MuiTypography>{p.members?.length || 0} / {p.teamSize}</MuiTypography>
                     </div>
 
                   </div>

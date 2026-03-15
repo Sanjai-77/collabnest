@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, Form, Input, Select, Upload, Button, Avatar, Tag, message, Divider, Typography, Space } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { 
   User as UserIcon, 
@@ -17,7 +18,7 @@ import {
 } from 'lucide-react';
 import api from '../config/api';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 const skillOptions = [
   'React', 'Node.js', 'Python', 'Java', 'C++', 'Machine Learning',
@@ -94,7 +95,7 @@ export default function ProfilePage() {
     <div className="profile-page-modern">
       <div className="page-header-simple" style={{ marginBottom: 32 }}>
         <Title level={2}>Account Settings</Title>
-        <Text type="secondary">Manage your public presence and preferences.</Text>
+        <MuiTypography color="text.secondary">Manage your public presence and preferences.</MuiTypography>
       </div>
 
       <motion.div 
@@ -113,13 +114,13 @@ export default function ProfilePage() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
                     <Title level={3} style={{ margin: 0 }}>{profile.username}</Title>
-                    <Text type="secondary" style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                    <MuiTypography color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                       <Mail size={14} /> {profile.email}
-                    </Text>
+                    </MuiTypography>
                     {profile.phone && (
-                      <Text type="secondary" style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                      <MuiTypography color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                         <Phone size={14} /> {profile.phone}
-                      </Text>
+                      </MuiTypography>
                     )}
                   </div>
                   {!editing ? (
@@ -193,7 +194,7 @@ export default function ProfilePage() {
                     {(profile.skills || []).map(s => (
                       <Tag key={s} className="skill-tag-premium">{s}</Tag>
                     ))}
-                    {(!profile.skills || profile.skills.length === 0) && <Text type="secondary">No skills listed yet.</Text>}
+                    {(!profile.skills || profile.skills.length === 0) && <MuiTypography color="text.secondary">No skills listed yet.</MuiTypography>}
                   </div>
                 </div>
 
@@ -205,7 +206,7 @@ export default function ProfilePage() {
                         @{profile.github} <ExternalLink size={14} />
                       </a>
                     ) : (
-                      <Text type="secondary">Not linked</Text>
+                      <MuiTypography color="text.secondary">Not linked</MuiTypography>
                     )}
                   </div>
 
@@ -216,7 +217,7 @@ export default function ProfilePage() {
                         <FileText size={14} /> {profile.resume}
                       </div>
                     ) : (
-                      <Text type="secondary">No resume uploaded</Text>
+                      <MuiTypography color="text.secondary">No resume uploaded</MuiTypography>
                     )}
                   </div>
                 </div>

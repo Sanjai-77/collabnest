@@ -1,4 +1,5 @@
 import { Form, Input, Button, Select, Upload, message, Typography } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, Github, UploadCloud, Rocket, ArrowRight } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -6,7 +7,7 @@ import { useState } from 'react';
 import GoogleLoginButton from '../components/GoogleLoginButton';
 import api from '../config/api';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const skillOptions = [
   'React', 'Node.js', 'Python', 'Java', 'C++', 'Machine Learning',
@@ -73,7 +74,7 @@ export default function RegisterPage() {
             <span className="logo-gradient">CollabNest</span>
           </div>
           <Title level={2} style={{ marginTop: 24, marginBottom: 8 }}>Create your account</Title>
-          <Text type="secondary">Join the community of student collaborators</Text>
+          <MuiTypography color="text.secondary">Join the community of student collaborators</MuiTypography>
         </motion.div>
 
         <motion.div variants={item} style={{ marginTop: 32 }}>
@@ -131,9 +132,9 @@ export default function RegisterPage() {
         </motion.div>
 
         <motion.div variants={item} className="auth-footer">
-          <Text type="secondary">
+          <MuiTypography color="text.secondary">
             Already have an account? <Link to="/login" className="auth-link">Sign in</Link>
-          </Text>
+          </MuiTypography>
         </motion.div>
       </motion.div>
     </div>

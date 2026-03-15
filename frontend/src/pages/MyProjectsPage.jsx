@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, Badge, Button, Tag, Avatar, Typography, Spin } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { 
   Rocket, 
@@ -12,7 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 const tagColors = {
   React: 'blue', 'Node.js': 'green', Python: 'gold', 'Machine Learning': 'purple',
@@ -58,7 +59,7 @@ export default function MyProjectsPage() {
       <div className="discovery-header-premium">
         <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
           <Title level={2} className="discovery-title"><Rocket size={28} /> My Workspace</Title>
-          <Text type="secondary" className="discovery-subtitle">Manage and collaborate on projects you're actively building.</Text>
+          <MuiTypography color="text.secondary" className="discovery-subtitle">Manage and collaborate on projects you're actively building.</MuiTypography>
         </motion.div>
         
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
@@ -77,7 +78,7 @@ export default function MyProjectsPage() {
       {loading ? (
         <div className="loading-state-premium">
           <Spin size="large" />
-          <Text type="secondary">Loading your workspace...</Text>
+          <MuiTypography color="text.secondary">Loading your workspace...</MuiTypography>
         </div>
       ) : projects.length === 0 ? (
         <motion.div 
@@ -87,7 +88,7 @@ export default function MyProjectsPage() {
         >
           <Briefcase size={64} className="empty-icon" />
           <Title level={4}>Your workspace is empty</Title>
-          <Text type="secondary">Join an existing project or create one to start collaborating.</Text>
+          <MuiTypography color="text.secondary">Join an existing project or create one to start collaborating.</MuiTypography>
           <div style={{ marginTop: 32 }}>
             <Button 
               type="primary" 
@@ -135,12 +136,12 @@ export default function MyProjectsPage() {
                   <div className="card-footer-discovery">
                     <div className="team-stats-lite">
                       <Users size={14} />
-                      <Text>{p.members?.length || 1} / {p.teamSize} Contributors</Text>
+                      <MuiTypography>{p.members?.length || 1} / {p.teamSize} Contributors</MuiTypography>
                     </div>
                     
                     <div className="status-indicator-lite">
                       <div className="pulse-dot"></div>
-                      <Text size="small" type="secondary">Active</Text>
+                      <MuiTypography variant="caption" color="text.secondary">Active</MuiTypography>
                     </div>
                   </div>
 

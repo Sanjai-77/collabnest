@@ -1,4 +1,5 @@
 import { Button, Typography } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -14,7 +15,7 @@ import {
   Star
 } from 'lucide-react';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const features = [
   {
@@ -168,7 +169,7 @@ export default function LandingPage() {
       <section className="features-section">
         <div className="section-header">
           <Title level={2}>Everything you need to ship</Title>
-          <Text type="secondary">Powerful tools designed specifically for student project lifecycles.</Text>
+          <MuiTypography color="text.secondary">Powerful tools designed specifically for student project lifecycles.</MuiTypography>
         </div>
         
         <motion.div 
@@ -189,7 +190,7 @@ export default function LandingPage() {
                 {f.icon}
               </div>
               <Title level={4}>{f.title}</Title>
-              <Text type="secondary">{f.desc}</Text>
+              <MuiTypography color="text.secondary">{f.desc}</MuiTypography>
               <div className="feature-border" style={{ background: f.color }}></div>
             </motion.div>
           ))}
@@ -200,15 +201,15 @@ export default function LandingPage() {
       <section className="stats-strip">
         <div className="stat-item">
           <Title level={3}>1k+</Title>
-          <Text type="secondary">Active Projects</Text>
+          <MuiTypography color="text.secondary">Active Projects</MuiTypography>
         </div>
         <div className="stat-item">
           <Title level={3}>5k+</Title>
-          <Text type="secondary">Students</Text>
+          <MuiTypography color="text.secondary">Students</MuiTypography>
         </div>
         <div className="stat-item">
           <Title level={3}>100+</Title>
-          <Text type="secondary">Universities</Text>
+          <MuiTypography color="text.secondary">Universities</MuiTypography>
         </div>
       </section>
 

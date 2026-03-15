@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, Avatar, Button, Typography, Tag, Space, message, Spin, Empty, Tabs } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../config/api';
 import { 
@@ -17,7 +18,7 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 const STATUS_CONFIG = {
   pending:  { icon: <Clock size={14} />, color: 'orange', label: 'Pending' },
@@ -82,7 +83,7 @@ export default function JoinRequestsPage() {
   const IncomingTab = () => (
     incoming.length === 0 ? (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="empty-state-modern">
-        <Empty description={<Text type="secondary">No pending requests for your projects</Text>} />
+        <Empty description={<MuiTypography color="text.secondary">No pending requests for your projects</MuiTypography>} />
       </motion.div>
     ) : (
       <motion.div variants={container} initial="hidden" animate="show" className="requests-stack">
@@ -95,9 +96,9 @@ export default function JoinRequestsPage() {
                     <Avatar size={48} src={request.user?.avatar} icon={<User size={24} />} className="profile-avatar-main" />
                     <div>
                        <Title level={4} style={{ margin: 0 }}>{request.user?.username}</Title>
-                      <Text type="secondary" style={{ fontSize: '13px' }}>
-                        Wants to join <Text strong>{request.project?.title}</Text>
-                      </Text>
+                      <MuiTypography color="text.secondary" sx={{ fontSize: '13px' }}>
+                        Wants to join <MuiTypography component="span" sx={{ fontWeight: 600 }}>{request.project?.title}</MuiTypography>
+                      </MuiTypography>
                     </div>
                   </div>
                   <div className="request-actions-modern">
@@ -133,7 +134,7 @@ export default function JoinRequestsPage() {
   const SentTab = () => (
     sent.length === 0 ? (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="empty-state-modern">
-        <Empty description={<Text type="secondary">You haven't sent any requests yet</Text>} />
+        <Empty description={<MuiTypography color="text.secondary">You haven't sent any requests yet</MuiTypography>} />
       </motion.div>
     ) : (
       <motion.div variants={container} initial="hidden" animate="show" className="requests-stack">
@@ -145,7 +146,7 @@ export default function JoinRequestsPage() {
                 <div className="request-card-header-modern">
                   <div>
                     <Title level={4} style={{ margin: 0 }}>{request.project?.title}</Title>
-                    <Text type="secondary" style={{ fontSize: '12px' }}>Submitted on {new Date(request.createdAt).toLocaleDateString()}</Text>
+                    <MuiTypography color="text.secondary" sx={{ fontSize: '12px' }}>Submitted on {new Date(request.createdAt).toLocaleDateString()}</MuiTypography>
                   </div>
                   <Tag color={cfg.color} icon={cfg.icon} className="status-tag-premium">{cfg.label}</Tag>
                 </div>
@@ -170,7 +171,7 @@ export default function JoinRequestsPage() {
     <div className="join-requests-page-modern">
       <div className="page-header-simple" style={{ marginBottom: 32 }}>
         <Title level={2}>Network Requests</Title>
-        <Text type="secondary">Manage your collaborations and project invitations.</Text>
+        <MuiTypography color="text.secondary">Manage your collaborations and project invitations.</MuiTypography>
       </div>
 
       <Tabs defaultActiveKey="incoming" items={tabItems} className="modern-tabs" />

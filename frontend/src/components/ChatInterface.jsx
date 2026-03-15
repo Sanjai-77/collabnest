@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { Avatar, Spin, Typography, Input, Button } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, User, MessageSquare } from 'lucide-react';
 import api from '../config/api';
 import socket from '../config/socket';
 
-const { Text } = Typography;
+// Typography components destructured from Ant Design
+const { Title, Paragraph } = Typography;
 
 export default function ChatInterface({ projectId, onNewMessage }) {
   const [messages, setMessages] = useState([]);
@@ -71,7 +73,7 @@ export default function ChatInterface({ projectId, onNewMessage }) {
         ) : messages.length === 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--text-muted)' }}>
             <MessageSquare size={48} style={{ opacity: 0.2, marginBottom: 16 }} />
-            <Text type="secondary">No messages yet. Start the conversation!</Text>
+            <MuiTypography color="text.secondary">No messages yet. Start the conversation!</MuiTypography>
           </div>
         ) : (
           <AnimatePresence initial={false}>
@@ -94,10 +96,10 @@ export default function ChatInterface({ projectId, onNewMessage }) {
                   {!isOwn && <Avatar src={msg.senderId?.avatar} icon={<User size={16} />} style={{ flexShrink: 0, marginTop: '4px' }} />}
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: isOwn ? 'flex-end' : 'flex-start' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                       {!isOwn && <Text strong style={{ fontSize: '12px' }}>{msg.senderName || msg.senderId?.username}</Text>}
-                      <Text type="secondary" style={{ fontSize: '10px' }}>
+                       {!isOwn && <MuiTypography sx={{ fontSize: '12px', fontWeight: 600 }}>{msg.senderName || msg.senderId?.username}</MuiTypography>}
+                      <MuiTypography color="text.secondary" sx={{ fontSize: '10px' }}>
                         {new Date(msg.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </Text>
+                      </MuiTypography>
                     </div>
                     <div 
                       style={{ 

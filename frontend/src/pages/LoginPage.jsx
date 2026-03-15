@@ -1,4 +1,5 @@
 import { Form, Input, Button, Checkbox, message, Typography } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Rocket, ArrowRight } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -6,7 +7,7 @@ import { useState } from 'react';
 import GoogleLoginButton from '../components/GoogleLoginButton';
 import api from '../config/api';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const container = {
   hidden: { opacity: 0 },
@@ -63,7 +64,7 @@ export default function LoginPage() {
             <span className="logo-gradient">CollabNest</span>
           </div>
           <Title level={2} style={{ marginTop: 24, marginBottom: 8 }}>Welcome back</Title>
-          <Text type="secondary">Enter your credentials to access your workspace</Text>
+          <MuiTypography color="text.secondary">Enter your credentials to access your workspace</MuiTypography>
         </motion.div>
 
         <motion.div variants={item} style={{ marginTop: 32 }}>
@@ -98,7 +99,7 @@ export default function LoginPage() {
             </Form.Item>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <Checkbox><Text type="secondary" style={{ fontSize: '13px' }}>Remember me</Text></Checkbox>
+              <Checkbox><MuiTypography color="text.secondary" sx={{ fontSize: '13px', display: 'inline' }}>Remember me</MuiTypography></Checkbox>
               <Link to="#" className="forgot-link">Forgot password?</Link>
             </div>
 
@@ -125,9 +126,9 @@ export default function LoginPage() {
         </motion.div>
 
         <motion.div variants={item} className="auth-footer">
-          <Text type="secondary">
+          <MuiTypography color="text.secondary">
             Don't have an account? <Link to="/register" className="auth-link">Create one for free</Link>
-          </Text>
+          </MuiTypography>
         </motion.div>
       </motion.div>
     </div>

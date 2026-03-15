@@ -1,11 +1,12 @@
 import { Form, Input, InputNumber, Select, Button, Card, Typography, Space, message } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Rocket, Users, Info, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import api from '../config/api';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 const { TextArea } = Input;
 
 const skillOptions = [
@@ -68,7 +69,7 @@ export default function CreateProjectPage() {
       >
         <motion.div variants={item} className="page-header-simple">
           <Title level={2}>Share Your Vision</Title>
-          <Text type="secondary">Create a new project and find the perfect team to build it with.</Text>
+          <MuiTypography color="text.secondary">Create a new project and find the perfect team to build it with.</MuiTypography>
         </motion.div>
 
         <motion.div variants={item} style={{ marginTop: 32 }}>

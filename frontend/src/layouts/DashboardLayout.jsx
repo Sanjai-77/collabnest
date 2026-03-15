@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Layout, Menu, Button, Avatar, Badge, Popover, Dropdown, Input, List, Typography, notification } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { 
   LayoutDashboard, 
   Briefcase, 
@@ -140,7 +141,7 @@ export default function DashboardLayout() {
   const notificationContent = (
     <div style={{ width: 320 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <Typography.Text strong>Notifications</Typography.Text>
+        <MuiTypography variant="subtitle2" sx={{ fontWeight: 600 }}>Notifications</MuiTypography>
         <Button type="link" size="small" onClick={() => navigate('/dashboard/notifications')}>View all</Button>
       </div>
       {notificationsList.length === 0 ? (

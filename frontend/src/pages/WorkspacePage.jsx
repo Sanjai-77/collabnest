@@ -14,6 +14,7 @@ import {
   Divider,
   Button
 } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { 
   ChevronLeft, 
   Settings, 
@@ -34,7 +35,7 @@ import ChatInterface from '../components/ChatInterface';
 import MembersTable from '../components/MembersTable';
 import EditProjectModal from '../components/EditProjectModal';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 export default function WorkspacePage() {
   const navigate = useNavigate();
@@ -79,7 +80,7 @@ export default function WorkspacePage() {
 
 
 
-  if (loading) return <div className="loading-state-premium"><Spin size="large" /><Text type="secondary">Preparing your workspace...</Text></div>;
+  if (loading) return <div className="loading-state-premium"><Spin size="large" /><MuiTypography color="text.secondary">Preparing your workspace...</MuiTypography></div>;
   if (!project) return <div style={{ textAlign: 'center', padding: '100px', color: 'var(--text-secondary)' }}>Project not found</div>;
 
   const handleDelete = async () => {
@@ -172,7 +173,7 @@ export default function WorkspacePage() {
             <Title level={3} style={{ margin: 0 }} className="discovery-title">{project.title}</Title>
             <div className="status-indicator-lite" style={{ marginTop: 4 }}>
               <div className="pulse-dot"></div>
-              <Text size="small" type="secondary">Workspace Live</Text>
+              <MuiTypography variant="caption" color="text.secondary">Workspace Live</MuiTypography>
             </div>
           </div>
         </div>

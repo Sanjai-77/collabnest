@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, Row, Col, Typography, Button, Timeline, Empty } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FolderRoot, 
@@ -13,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const container = {
   hidden: { opacity: 0 },
@@ -115,7 +116,7 @@ export default function DashboardHome() {
         style={{ marginBottom: 32 }}
       >
         <Title level={2} style={{ marginBottom: 4 }}>Overview</Title>
-        <Text type="secondary">Welcome back! Here's what's happening with your projects today.</Text>
+        <MuiTypography color="text.secondary">Welcome back! Here's what's happening with your projects today.</MuiTypography>
       </motion.div>
 
       <motion.div 
@@ -140,10 +141,10 @@ export default function DashboardHome() {
                   </div>
                   <div className="stat-card-body">
                     <Title level={2} style={{ margin: '12px 0 4px' }}>{s.value}</Title>
-                    <Text strong>{s.label}</Text>
+                    <MuiTypography sx={{ fontWeight: 600 }}>{s.label}</MuiTypography>
                     <div className="stat-trend">
                       <TrendingUp size={12} style={{ marginRight: 4 }} />
-                      <Text type="secondary" style={{ fontSize: '11px' }}>{s.trend}</Text>
+                      <MuiTypography color="text.secondary" sx={{ fontSize: '11px' }}>{s.trend}</MuiTypography>
                     </div>
                   </div>
                 </Card>
@@ -171,11 +172,11 @@ export default function DashboardHome() {
                     color: getActivityColor(act.type),
                     children: (
                       <div className="activity-item">
-                        <Text strong>{act.message}</Text>
+                        <MuiTypography sx={{ fontWeight: 600 }}>{act.message}</MuiTypography>
                         <br />
-                        <Text type="secondary" style={{ fontSize: '11px' }}>
+                        <MuiTypography color="text.secondary" sx={{ fontSize: '11px' }}>
                           {formatRelativeTime(act.createdAt)} • {act.userId?.username || 'User'}
-                        </Text>
+                        </MuiTypography>
                       </div>
                     ),
                   }))}

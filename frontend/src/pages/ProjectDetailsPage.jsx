@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Typography, Button, Tag, Space, Avatar, List, Card, Spin, message, Popconfirm } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -19,7 +20,7 @@ import api from '../config/api';
 import JoinRequestModal from '../components/JoinRequestModal';
 import EditProjectModal from '../components/EditProjectModal';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Paragraph } = Typography;
 
 const REQUEST_STATUS_CONFIG = {
   pending:  { color: 'orange', icon: <Clock size={14} />, label: 'Review Pending' },
@@ -137,7 +138,7 @@ export default function ProjectDetailsPage() {
             <Space style={{ marginTop: 12 }}>
               <div className="leader-badge-premium">
                 <Avatar size={24} src={project.createdBy?.avatar} icon={<User size={14} />} style={{ backgroundColor: 'var(--primary)' }} />
-                <Text strong style={{ fontSize: '12px' }}>{project.createdBy?.username}</Text>
+                <MuiTypography sx={{ fontWeight: 600, fontSize: '12px' }}>{project.createdBy?.username}</MuiTypography>
               </div>
               <Tag className="members-tag-premium">
                 <Users size={12} style={{ marginRight: 6 }} />
@@ -174,7 +175,7 @@ export default function ProjectDetailsPage() {
               </Paragraph>
               
               <div style={{ marginTop: 32 }}>
-                <Text strong style={{ display: 'block', marginBottom: 12 }}>Required Competencies</Text>
+                <MuiTypography sx={{ display: 'block', marginBottom: '12px', fontWeight: 600 }}>Required Competencies</MuiTypography>
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                   {(project.requiredSkills || []).map(s => (
                     <Tag key={s} className="skill-tag-premium">{s}</Tag>
@@ -192,8 +193,8 @@ export default function ProjectDetailsPage() {
                   <List.Item className="member-list-item-premium">
                     <List.Item.Meta
                       avatar={<Avatar src={m.avatar} style={{ backgroundColor: 'var(--primary)' }} icon={<User size={14} />} />}
-                      title={<Text strong>{m.username}</Text>}
-                      description={<Text type="secondary" style={{ fontSize: '11px' }}>{m._id === project.createdBy?._id || m._id === 'creator' ? 'Project Lead' : 'Contributor'}</Text>}
+                      title={<MuiTypography sx={{ fontWeight: 600 }}>{m.username}</MuiTypography>}
+                      description={<MuiTypography color="text.secondary" sx={{ fontSize: '11px' }}>{m._id === project.createdBy?._id || m._id === 'creator' ? 'Project Lead' : 'Contributor'}</MuiTypography>}
                     />
                   </List.Item>
                 )}

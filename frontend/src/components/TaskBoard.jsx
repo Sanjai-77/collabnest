@@ -18,6 +18,7 @@ import {
   Space,
   Tooltip
 } from 'antd';
+import { Typography as MuiTypography } from '@mui/material';
 import { 
   Plus, 
   Clock, 
@@ -37,7 +38,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import api from '../config/api';
 
-const { Text, Title } = Typography;
+const { Title } = Typography;
 
 const COLUMNS = [
   { id: 'todo', title: 'To Do', color: '#6366f1', icon: <Circle size={16} /> },
@@ -133,7 +134,7 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
   if (loading) return (
     <div style={{ textAlign: 'center', padding: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
       <Spin size="large" />
-      <Text type="secondary">Organizing your workspace...</Text>
+      <MuiTypography color="text.secondary">Organizing your workspace...</MuiTypography>
     </div>
   );
 
@@ -142,7 +143,7 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
       <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <Title level={4} style={{ margin: 0 }}>Project Board</Title>
-          <Text type="secondary" style={{ fontSize: '13px' }}>Track progress and manage team tasks.</Text>
+          <MuiTypography color="text.secondary" sx={{ fontSize: '13px' }}>Track progress and manage team tasks.</MuiTypography>
         </div>
         <Button 
           type="primary" 
@@ -184,7 +185,7 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ color: column.color, display: 'flex' }}>{column.icon}</span>
-                  <Text strong style={{ fontSize: '14px' }}>{column.title}</Text>
+                  <MuiTypography sx={{ fontWeight: 600, fontSize: '14px' }}>{column.title}</MuiTypography>
                   <Tag 
                     style={{ 
                       margin: 0, 
@@ -251,16 +252,15 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
                                   bodyStyle={{ padding: '16px' }}
                                 >
                                   <div style={{ marginBottom: 12 }}>
-                                    <Text
-                                      strong
-                                      style={{ fontSize: '14px', display: 'block', marginBottom: 6 }}
+                                    <MuiTypography
+                                      sx={{ fontSize: '14px', display: 'block', marginBottom: '6px', fontWeight: 600 }}
                                     >
                                       {task.title}
-                                    </Text>
+                                    </MuiTypography>
                                     {task.description && (
-                                      <Text
-                                        type="secondary"
-                                        style={{
+                                      <MuiTypography
+                                        color="text.secondary"
+                                        sx={{
                                           fontSize: '12px',
                                           display: '-webkit-box',
                                           WebkitLineClamp: 2,
@@ -270,7 +270,7 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
                                         }}
                                       >
                                         {task.description}
-                                      </Text>
+                                      </MuiTypography>
                                     )}
                                   </div>
 
@@ -285,22 +285,22 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                         <Clock size={12} style={{ color: 'var(--text-muted)' }} />
-                                        <Text type="secondary" style={{ fontSize: '11px' }}>
+                                        <MuiTypography color="text.secondary" sx={{ fontSize: '11px' }}>
                                           {new Date(task.createdAt).toLocaleDateString(undefined, {
                                             month: 'short',
                                             day: 'numeric',
                                           })}
-                                        </Text>
+                                        </MuiTypography>
                                       </div>
                                       {task.dueDate && (
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                           <Calendar size={12} style={{ color: 'var(--primary)' }} />
-                                          <Text style={{ fontSize: '11px', color: 'var(--primary)' }}>
+                                          <MuiTypography sx={{ fontSize: '11px', color: 'var(--primary)' }}>
                                             Due: {new Date(task.dueDate).toLocaleDateString(undefined, {
                                               month: 'short',
                                               day: 'numeric',
                                             })}
-                                          </Text>
+                                          </MuiTypography>
                                         </div>
                                       )}
                                     </div>
