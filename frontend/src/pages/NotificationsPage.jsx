@@ -110,7 +110,7 @@ export default function NotificationsPage() {
     <div className="notifications-page-modern">
       <div className="page-header" style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div>
-          <Title level={2} style={{ margin: 0 }}>Notifications</Title>
+          <MuiTypography variant="h4" sx={{ margin: 0, fontWeight: 700 }}>Notifications</MuiTypography>
           <MuiTypography color="text.secondary">Manage your project alerts and team updates.</MuiTypography>
         </div>
         {unreadCount > 0 && (
@@ -138,7 +138,7 @@ export default function NotificationsPage() {
           }}
         >
           <Bell size={48} style={{ color: 'var(--text-muted)', marginBottom: 16, opacity: 0.2 }} />
-          <Title level={4}>No notifications</Title>
+          <MuiTypography variant="h6" sx={{ fontWeight: 600 }}>No notifications</MuiTypography>
           <MuiTypography color="text.secondary">You're all caught up! New alerts will appear here.</MuiTypography>
         </motion.div>
       ) : (

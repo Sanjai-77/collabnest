@@ -7,7 +7,8 @@ import { useState } from 'react';
 import GoogleLoginButton from '../components/GoogleLoginButton';
 import api from '../config/api';
 
-const { Title } = Typography;
+// Typography components destructured from Ant Design
+const { Paragraph } = Typography;
 
 const skillOptions = [
   'React', 'Node.js', 'Python', 'Java', 'C++', 'Machine Learning',
@@ -73,7 +74,7 @@ export default function RegisterPage() {
             <Rocket size={32} color="var(--primary)" />
             <span className="logo-gradient">CollabNest</span>
           </div>
-          <Title level={2} style={{ marginTop: 24, marginBottom: 8 }}>Create your account</Title>
+          <MuiTypography variant="h4" sx={{ marginTop: '24px', marginBottom: '8px', fontWeight: 700 }}>Create your account</MuiTypography>
           <MuiTypography color="text.secondary">Join the community of student collaborators</MuiTypography>
         </motion.div>
 

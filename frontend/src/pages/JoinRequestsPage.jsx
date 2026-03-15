@@ -18,7 +18,7 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 
-const { Title, Paragraph } = Typography;
+const { Paragraph } = Typography;
 
 const STATUS_CONFIG = {
   pending:  { icon: <Clock size={14} />, color: 'orange', label: 'Pending' },
@@ -95,7 +95,7 @@ export default function JoinRequestsPage() {
                   <div className="user-info-modern">
                     <Avatar size={48} src={request.user?.avatar} icon={<User size={24} />} className="profile-avatar-main" />
                     <div>
-                       <Title level={4} style={{ margin: 0 }}>{request.user?.username}</Title>
+                       <MuiTypography variant="h6" sx={{ margin: 0, fontWeight: 700 }}>{request.user?.username}</MuiTypography>
                       <MuiTypography color="text.secondary" sx={{ fontSize: '13px' }}>
                         Wants to join <MuiTypography component="span" sx={{ fontWeight: 600 }}>{request.project?.title}</MuiTypography>
                       </MuiTypography>
@@ -145,7 +145,7 @@ export default function JoinRequestsPage() {
               <Card className="details-card-premium request-card-modern">
                 <div className="request-card-header-modern">
                   <div>
-                    <Title level={4} style={{ margin: 0 }}>{request.project?.title}</Title>
+                    <MuiTypography variant="h6" sx={{ margin: 0, fontWeight: 700 }}>{request.project?.title}</MuiTypography>
                     <MuiTypography color="text.secondary" sx={{ fontSize: '12px' }}>Submitted on {new Date(request.createdAt).toLocaleDateString()}</MuiTypography>
                   </div>
                   <Tag color={cfg.color} icon={cfg.icon} className="status-tag-premium">{cfg.label}</Tag>
@@ -170,7 +170,7 @@ export default function JoinRequestsPage() {
   return (
     <div className="join-requests-page-modern">
       <div className="page-header-simple" style={{ marginBottom: 32 }}>
-        <Title level={2}>Network Requests</Title>
+        <MuiTypography variant="h4" sx={{ fontWeight: 700 }}>Network Requests</MuiTypography>
         <MuiTypography color="text.secondary">Manage your collaborations and project invitations.</MuiTypography>
       </div>
 

@@ -20,7 +20,7 @@ import api from '../config/api';
 import JoinRequestModal from '../components/JoinRequestModal';
 import EditProjectModal from '../components/EditProjectModal';
 
-const { Title, Paragraph } = Typography;
+const { Paragraph } = Typography;
 
 const REQUEST_STATUS_CONFIG = {
   pending:  { color: 'orange', icon: <Clock size={14} />, label: 'Review Pending' },
@@ -134,7 +134,7 @@ export default function ProjectDetailsPage() {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 24, marginBottom: 40 }}>
           <motion.div variants={item}>
-            <Title level={1} style={{ margin: 0, letterSpacing: '-0.02em' }}>{project.title}</Title>
+            <MuiTypography variant="h3" sx={{ margin: 0, letterSpacing: '-0.02em', fontWeight: 800 }}>{project.title}</MuiTypography>
             <Space style={{ marginTop: 12 }}>
               <div className="leader-badge-premium">
                 <Avatar size={24} src={project.createdBy?.avatar} icon={<User size={14} />} style={{ backgroundColor: 'var(--primary)' }} />

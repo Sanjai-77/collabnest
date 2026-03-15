@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import api from '../config/api';
 
-const { Title, Paragraph } = Typography;
+const { Paragraph } = Typography;
 
 const skillOptions = [
   'React', 'Node.js', 'Python', 'Java', 'C++', 'Machine Learning',
@@ -94,7 +94,7 @@ export default function ProfilePage() {
   return (
     <div className="profile-page-modern">
       <div className="page-header-simple" style={{ marginBottom: 32 }}>
-        <Title level={2}>Account Settings</Title>
+        <MuiTypography variant="h4" sx={{ fontWeight: 700 }}>Account Settings</MuiTypography>
         <MuiTypography color="text.secondary">Manage your public presence and preferences.</MuiTypography>
       </div>
 
@@ -113,7 +113,7 @@ export default function ProfilePage() {
               <div className="profile-info-main">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <Title level={3} style={{ margin: 0 }}>{profile.username}</Title>
+                    <MuiTypography variant="h5" sx={{ margin: 0, fontWeight: 700 }}>{profile.username}</MuiTypography>
                     <MuiTypography color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                       <Mail size={14} /> {profile.email}
                     </MuiTypography>
@@ -182,14 +182,18 @@ export default function ProfilePage() {
             ) : (
               <div className="profile-details-grid">
                 <div className="profile-section-item">
-                  <Title level={5} className="section-label-modern"><ShieldCheck size={16} /> ABOUT ME</Title>
+                  <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
+                    <ShieldCheck size={16} /> ABOUT ME
+                  </MuiTypography>
                   <Paragraph className="profile-bio-text">
                     {profile.bio || 'Add a bio to help others get to know you.'}
                   </Paragraph>
                 </div>
 
                 <div className="profile-section-item">
-                  <Title level={5} className="section-label-modern"><Code2 size={16} /> CORE STACK</Title>
+                  <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
+                    <Code2 size={16} /> CORE STACK
+                  </MuiTypography>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                     {(profile.skills || []).map(s => (
                       <Tag key={s} className="skill-tag-premium">{s}</Tag>
@@ -200,7 +204,9 @@ export default function ProfilePage() {
 
                 <div className="auth-grid-2" style={{ marginTop: 20 }}>
                   <div className="profile-section-item">
-                    <Title level={5} className="section-label-modern"><Github size={16} /> CONNECT</Title>
+                    <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
+                      <Github size={16} /> CONNECT
+                    </MuiTypography>
                     {profile.github ? (
                       <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer" className="auth-link" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         @{profile.github} <ExternalLink size={14} />
@@ -211,7 +217,9 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="profile-section-item">
-                    <Title level={5} className="section-label-modern"><FileText size={16} /> DOCUMENTS</Title>
+                    <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
+                      <FileText size={16} /> DOCUMENTS
+                    </MuiTypography>
                     {profile.resume ? (
                       <div className="resume-tag-modern">
                         <FileText size={14} /> {profile.resume}

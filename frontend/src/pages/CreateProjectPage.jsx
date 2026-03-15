@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import api from '../config/api';
 
-const { Title, Paragraph } = Typography;
+const { Paragraph } = Typography;
 const { TextArea } = Input;
 
 const skillOptions = [
@@ -68,7 +68,7 @@ export default function CreateProjectPage() {
         style={{ marginTop: 24 }}
       >
         <motion.div variants={item} className="page-header-simple">
-          <Title level={2}>Share Your Vision</Title>
+          <MuiTypography variant="h4" sx={{ fontWeight: 700 }}>Share Your Vision</MuiTypography>
           <MuiTypography color="text.secondary">Create a new project and find the perfect team to build it with.</MuiTypography>
         </motion.div>
 
@@ -77,7 +77,7 @@ export default function CreateProjectPage() {
             <Form layout="vertical" onFinish={onFinish} requiredMark={false}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
                 <div className="form-section-icon"><Info size={18} /></div>
-                <Title level={4} style={{ margin: 0 }}>Basic Information</Title>
+                <MuiTypography variant="h6" sx={{ margin: 0, fontWeight: 700 }}>Basic Information</MuiTypography>
               </div>
 
               <Form.Item
@@ -102,7 +102,7 @@ export default function CreateProjectPage() {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24, marginTop: 40 }}>
                 <div className="form-section-icon"><Users size={18} /></div>
-                <Title level={4} style={{ margin: 0 }}>Team & Skills</Title>
+                <MuiTypography variant="h6" sx={{ margin: 0, fontWeight: 700 }}>Team & Skills</MuiTypography>
               </div>
 
               <div className="auth-grid-2">

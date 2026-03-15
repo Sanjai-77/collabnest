@@ -35,7 +35,8 @@ import ChatInterface from '../components/ChatInterface';
 import MembersTable from '../components/MembersTable';
 import EditProjectModal from '../components/EditProjectModal';
 
-const { Title, Paragraph } = Typography;
+// Typography components destructured from Ant Design
+const { Paragraph } = Typography;
 
 export default function WorkspacePage() {
   const navigate = useNavigate();
@@ -109,9 +110,9 @@ export default function WorkspacePage() {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <div className="details-grid-modern" style={{ marginTop: 20 }}>
         <Card className="details-card-premium">
-          <Title level={4} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <MuiTypography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 700 }}>
             <Activity size={20} className="text-primary" /> Project Overview
-          </Title>
+          </MuiTypography>
           <Divider style={{ margin: '16px 0', borderColor: 'var(--border-color)' }} />
           <Descriptions column={1} labelStyle={{ color: 'var(--text-muted)', fontWeight: 500 }}>
             <Descriptions.Item label="Identity">{project.title}</Descriptions.Item>
@@ -124,9 +125,9 @@ export default function WorkspacePage() {
         </Card>
 
         <Card className="details-card-premium">
-          <Title level={4} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <MuiTypography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 700 }}>
             <Info size={20} className="text-primary" /> Strategic Aim
-          </Title>
+          </MuiTypography>
           <Divider style={{ margin: '16px 0', borderColor: 'var(--border-color)' }} />
           <Paragraph className="profile-bio-text" style={{ fontStyle: 'italic' }}>
             {project.description}
@@ -170,7 +171,7 @@ export default function WorkspacePage() {
             className="back-btn-modern"
           />
           <div>
-            <Title level={3} style={{ margin: 0 }} className="discovery-title">{project.title}</Title>
+            <MuiTypography variant="h5" sx={{ margin: 0, fontWeight: 700 }} className="discovery-title">{project.title}</MuiTypography>
             <div className="status-indicator-lite" style={{ marginTop: 4 }}>
               <div className="pulse-dot"></div>
               <MuiTypography variant="caption" color="text.secondary">Workspace Live</MuiTypography>

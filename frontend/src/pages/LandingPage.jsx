@@ -15,7 +15,8 @@ import {
   Star
 } from 'lucide-react';
 
-const { Title } = Typography;
+// Typography components destructured from Ant Design
+const { Paragraph } = Typography;
 
 const features = [
   {
@@ -168,7 +169,7 @@ export default function LandingPage() {
       {/* Features */}
       <section className="features-section">
         <div className="section-header">
-          <Title level={2}>Everything you need to ship</Title>
+          <MuiTypography variant="h4" sx={{ fontWeight: 800 }}>Everything you need to ship</MuiTypography>
           <MuiTypography color="text.secondary">Powerful tools designed specifically for student project lifecycles.</MuiTypography>
         </div>
         
@@ -189,7 +190,7 @@ export default function LandingPage() {
               <div className="feature-icon" style={{ background: `${f.color}15`, color: f.color }}>
                 {f.icon}
               </div>
-              <Title level={4}>{f.title}</Title>
+              <MuiTypography variant="h6" sx={{ fontWeight: 700 }}>{f.title}</MuiTypography>
               <MuiTypography color="text.secondary">{f.desc}</MuiTypography>
               <div className="feature-border" style={{ background: f.color }}></div>
             </motion.div>
@@ -200,15 +201,15 @@ export default function LandingPage() {
       {/* Social Proof Section (Optional) */}
       <section className="stats-strip">
         <div className="stat-item">
-          <Title level={3}>1k+</Title>
+          <MuiTypography variant="h5" sx={{ fontWeight: 800 }}>1k+</MuiTypography>
           <MuiTypography color="text.secondary">Active Projects</MuiTypography>
         </div>
         <div className="stat-item">
-          <Title level={3}>5k+</Title>
+          <MuiTypography variant="h5" sx={{ fontWeight: 800 }}>5k+</MuiTypography>
           <MuiTypography color="text.secondary">Students</MuiTypography>
         </div>
         <div className="stat-item">
-          <Title level={3}>100+</Title>
+          <MuiTypography variant="h5" sx={{ fontWeight: 800 }}>100+</MuiTypography>
           <MuiTypography color="text.secondary">Universities</MuiTypography>
         </div>
       </section>

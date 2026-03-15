@@ -14,7 +14,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 
-const { Title } = Typography;
+// Typography components destructured from Ant Design
+const { Paragraph } = Typography;
 
 const container = {
   hidden: { opacity: 0 },
@@ -115,7 +116,7 @@ export default function DashboardHome() {
         animate={{ y: 0, opacity: 1 }}
         style={{ marginBottom: 32 }}
       >
-        <Title level={2} style={{ marginBottom: 4 }}>Overview</Title>
+        <MuiTypography variant="h4" sx={{ marginBottom: '4px', fontWeight: 700 }}>Overview</MuiTypography>
         <MuiTypography color="text.secondary">Welcome back! Here's what's happening with your projects today.</MuiTypography>
       </motion.div>
 
@@ -140,7 +141,7 @@ export default function DashboardHome() {
                     <ArrowUpRight size={16} className="trend-arrow" />
                   </div>
                   <div className="stat-card-body">
-                    <Title level={2} style={{ margin: '12px 0 4px' }}>{s.value}</Title>
+                    <MuiTypography variant="h4" sx={{ margin: '12px 0 4px', fontWeight: 700 }}>{s.value}</MuiTypography>
                     <MuiTypography sx={{ fontWeight: 600 }}>{s.label}</MuiTypography>
                     <div className="stat-trend">
                       <TrendingUp size={12} style={{ marginRight: 4 }} />

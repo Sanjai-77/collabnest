@@ -7,7 +7,8 @@ import { useState } from 'react';
 import GoogleLoginButton from '../components/GoogleLoginButton';
 import api from '../config/api';
 
-const { Title } = Typography;
+// Typography components destructured from Ant Design
+const { Paragraph } = Typography;
 
 const container = {
   hidden: { opacity: 0 },
@@ -63,7 +64,7 @@ export default function LoginPage() {
             <Rocket size={32} color="var(--primary)" />
             <span className="logo-gradient">CollabNest</span>
           </div>
-          <Title level={2} style={{ marginTop: 24, marginBottom: 8 }}>Welcome back</Title>
+          <MuiTypography variant="h4" sx={{ marginTop: '24px', marginBottom: '8px', fontWeight: 700 }}>Welcome back</MuiTypography>
           <MuiTypography color="text.secondary">Enter your credentials to access your workspace</MuiTypography>
         </motion.div>
 

@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 
-const { Title, Paragraph } = Typography;
+const { Paragraph } = Typography;
 
 const tagColors = {
   React: 'blue', 'Node.js': 'green', Python: 'gold', 'Machine Learning': 'purple',
@@ -69,7 +69,9 @@ export default function ProjectsPage() {
     <div className="projects-discovery-modern">
       <div className="discovery-header-premium">
         <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
-          <Title level={2} className="discovery-title"><Compass size={28} /> Explore Projects</Title>
+          <MuiTypography variant="h4" className="discovery-title" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Compass size={28} /> Explore Projects
+          </MuiTypography>
           <MuiTypography color="text.secondary" className="discovery-subtitle">Find your next big collaboration among amazing student projects.</MuiTypography>
         </motion.div>
         
@@ -118,7 +120,7 @@ export default function ProjectsPage() {
           className="empty-discovery-state"
         >
           <Compass size={64} className="empty-icon" />
-          <Title level={4}>No projects matched your search</Title>
+          <MuiTypography variant="h6" sx={{ fontWeight: 600 }}>No projects matched your search</MuiTypography>
           <MuiTypography color="text.secondary">Try broad terms or different skills to find more projects.</MuiTypography>
         </motion.div>
       ) : (
@@ -139,7 +141,7 @@ export default function ProjectsPage() {
                   <div className="card-top-info">
                     <Badge.Ribbon text={p.status || 'Active'} color={p.status === 'completed' ? 'green' : 'blue'}>
                       <div className="card-header-main">
-                        <Title level={4} className="card-title-premium">{p.title}</Title>
+                        <MuiTypography variant="h6" className="card-title-premium" sx={{ fontWeight: 700 }}>{p.title}</MuiTypography>
                         <Paragraph className="card-desc-premium" ellipsis={{ rows: 2 }}>
                           {p.description}
                         </Paragraph>

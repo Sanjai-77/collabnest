@@ -38,7 +38,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import api from '../config/api';
 
-const { Title } = Typography;
+// Typography components destructured from Ant Design
+const { Paragraph } = Typography;
 
 const COLUMNS = [
   { id: 'todo', title: 'To Do', color: '#6366f1', icon: <Circle size={16} /> },
@@ -142,7 +143,7 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
     <div className="task-board-modern">
       <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <Title level={4} style={{ margin: 0 }}>Project Board</Title>
+          <MuiTypography variant="h6" sx={{ margin: 0, fontWeight: 700 }}>Project Board</MuiTypography>
           <MuiTypography color="text.secondary" sx={{ fontSize: '13px' }}>Track progress and manage team tasks.</MuiTypography>
         </div>
         <Button 
@@ -359,7 +360,7 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
     </DragDropContext>
 
     <Modal
-      title={<Title level={4} style={{ margin: 0 }}>Create Task</Title>}
+      title={<MuiTypography variant="h6" sx={{ margin: 0, fontWeight: 700 }}>Create Task</MuiTypography>}
       open={isModalOpen}
       onCancel={() => {
         setIsModalOpen(false);
