@@ -1,3 +1,15 @@
+import { useState, useEffect, useCallback } from 'react';
+import { Button, Empty, Spin, Badge, Tag, Typography, Avatar } from 'antd';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Bell, 
+  UserPlus, 
+  CheckCircle2, 
+  XCircle, 
+  Layout, 
+  MessageSquare,
+  CheckCheck
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 import socket from '../config/socket';

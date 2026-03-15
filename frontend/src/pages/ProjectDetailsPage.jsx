@@ -1,4 +1,20 @@
+import { useState, useEffect } from 'react';
+import { Typography, Button, Tag, Space, Avatar, List, Card, Spin, message, Popconfirm } from 'antd';
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  Clock, 
+  CheckCircle2, 
+  XCircle, 
+  User, 
+  Users, 
+  Layout, 
+  Edit3, 
+  Trash2,
+  Target
+} from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import api from '../config/api';
 import JoinRequestModal from '../components/JoinRequestModal';
 import EditProjectModal from '../components/EditProjectModal';

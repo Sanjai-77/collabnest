@@ -1,3 +1,23 @@
+import { useState, useEffect, useRef } from 'react';
+import { Layout, Menu, Button, Avatar, Badge, Popover, Dropdown, Input, List, Typography, notification } from 'antd';
+import { 
+  LayoutDashboard, 
+  Briefcase, 
+  FolderOpen, 
+  UserCheck, 
+  Bell, 
+  User, 
+  Settings, 
+  LogOut, 
+  ChevronLeft, 
+  Moon, 
+  Sun, 
+  Rocket, 
+  Search, 
+  Menu as MenuIcon 
+} from 'lucide-react';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../components/ThemeContext';
 import api from '../config/api';
 import socket from '../config/socket';
