@@ -1,0 +1,162 @@
+import { Form, Input, InputNumber, Select, Button, Card, Typography, Space, message } from 'antd';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Rocket, Users, Info, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+
+const { Title, Text, Paragraph } = Typography;
+const { TextArea } = Input;
+
+const skillOptions = [
+  'React', 'Node.js', 'Python', 'Java', 'C++', 'Machine Learning',
+  'Flutter', 'Django', 'MongoDB', 'PostgreSQL', 'Docker', 'AWS',
+  'TypeScript', 'Go', 'Rust', 'Figma', 'UI/UX', 'Data Science',
+];
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const item = {
+  hidden: { y: 20, opacity: 0 },
+  show: { y: 0, opacity: 1 }
+};
+
+export default function CreateProjectPage() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const onFinish = async (values) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const res = await fetch('http://localhost:5000/api/projects', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        message.success('Project created successfully!');
+        navigate('/dashboard/projects');
+      } else {
+        message.error(data.message || 'Failed to create project');
+      }
+    } catch (error) {
+      console.error('Create project error:', error);
+      message.error('Server error, please try again later');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="create-project-page-modern">
+      <motion.div initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
+        <Button
+          type="text"
+          icon={<ArrowLeft size={16} />}
+          onClick={() => navigate(-1)}
+          className="back-btn-modern"
+        >
+          Back to Projects
+        </Button>
+      </motion.div>
+
+      <motion.div 
+        variants={container}
+        initial="hidden"
+        animate="show"
+        style={{ marginTop: 24 }}
+      >
+        <motion.div variants={item} className="page-header-simple">
+          <Title level={2}>Share Your Vision</Title>
+          <Text type="secondary">Create a new project and find the perfect team to build it with.</Text>
+        </motion.div>
+
+        <motion.div variants={item} style={{ marginTop: 32 }}>
+          <Card className="form-card-premium">
+            <Form layout="vertical" onFinish={onFinish} requiredMark={false}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
+                <div className="form-section-icon"><Info size={18} /></div>
+                <Title level={4} style={{ margin: 0 }}>Basic Information</Title>
+              </div>
+
+              <Form.Item
+                name="title"
+                label="Project Title"
+                rules={[{ required: true, message: 'What is your project called?' }]}
+              >
+                <Input placeholder="e.g. AI-Powered Study Assistant" size="large" className="modern-input" />
+              </Form.Item>
+
+              <Form.Item
+                name="description"
+                label="Executive Summary"
+                rules={[{ required: true, message: 'Please provide a brief description' }]}
+              >
+                <TextArea 
+                  rows={4} 
+                  placeholder="Tell us about the problem you're solving and how you plan to build it..." 
+                  className="modern-input"
+                />
+              </Form.Item>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24, marginTop: 40 }}>
+                <div className="form-section-icon"><Users size={18} /></div>
+                <Title level={4} style={{ margin: 0 }}>Team & Skills</Title>
+              </div>
+
+              <div className="auth-grid-2">
+                <Form.Item
+                  name="skills"
+                  label="Core Technologies"
+                  rules={[{ required: true, message: 'Select at least one skill' }]}
+                >
+                  <Select
+                    mode="multiple"
+                    placeholder="Search or select skills..."
+                    size="large"
+                    className="modern-select"
+                    options={skillOptions.map(s => ({ label: s, value: s }))}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="teamSize"
+                  label="Target Team Size"
+                  rules={[{ required: true, message: 'How many members do you need?' }]}
+                >
+                  <InputNumber min={2} max={10} placeholder="4" size="large" style={{ width: '100%' }} className="modern-input" />
+                </Form.Item>
+              </div>
+
+              <Form.Item style={{ marginTop: 40, marginBottom: 0 }}>
+                <Button 
+                  type="primary" 
+                  htmlType="submit" 
+                  size="large" 
+                  loading={loading} 
+                  className="auth-btn"
+                  block
+                >
+                  Launch Project <Rocket size={18} style={{ marginLeft: 8 }} />
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
