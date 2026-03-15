@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { Modal, Form, Input, Upload, Button, message } from 'antd';
 import { GithubOutlined, UploadOutlined } from '@ant-design/icons';
 import api from '../config/api';
 
@@ -7,6 +9,7 @@ export default function JoinRequestModal({ open, onClose, projectId }) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
+  const handleSubmit = () => {
     form.validateFields().then(async (values) => {
       try {
         setLoading(true);
@@ -26,6 +29,7 @@ export default function JoinRequestModal({ open, onClose, projectId }) {
         setLoading(false);
       }
     });
+  };
 
   return (
     <Modal

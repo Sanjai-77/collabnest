@@ -1,6 +1,11 @@
+import { useState, useEffect, useRef } from 'react';
+import { Avatar, Spin, Typography, Input, Button } from 'antd';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Send, User, MessageSquare } from 'lucide-react';
 import api from '../config/api';
 import socket from '../config/socket';
+
+const { Text } = Typography;
 
 export default function ChatInterface({ projectId, onNewMessage }) {
   const [messages, setMessages] = useState([]);
