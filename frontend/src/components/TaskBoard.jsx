@@ -423,10 +423,10 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
               optionLabelProp="label"
             >
               {projectMembers.map(member => (
-                <Select.Option key={member._id} value={member._id} label={member.name}>
+                <Select.Option key={member._id} value={member._id} label={member.username}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <Avatar size={20} src={member.avatar} icon={<User size={12} />} />
-                    {member.name}
+                    {member.username}
                   </div>
                 </Select.Option>
               ))}

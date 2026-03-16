@@ -98,13 +98,20 @@ export default function ProjectDetailsPage() {
 
   const renderJoinButton = () => {
     if (isMember) return null;
-    if (myRequest) {
-      const cfg = REQUEST_STATUS_CONFIG[myRequest.status] || REQUEST_STATUS_CONFIG.pending;
+    if (myRequest && myRequest.status === 'pending') {
       return (
-        <Tag color={cfg.color} icon={cfg.icon} className="status-tag-premium">
-          {cfg.label}
-        </Tag>
+        <Button disabled size="large" className="auth-btn" style={{ opacity: 0.8, cursor: 'not-allowed' }}>
+          <Clock size={18} style={{ marginRight: 8 }} /> Request Pending
+        </Button>
       );
+    }
+    if (myRequest && myRequest.status !== 'pending') {
+       const cfg = REQUEST_STATUS_CONFIG[myRequest.status] || REQUEST_STATUS_CONFIG.pending;
+       return (
+            <Tag color={cfg.color} icon={cfg.icon} className="status-tag-premium">
+              {cfg.label}
+            </Tag>
+       );
     }
     return (
       <Button type="primary" size="large" onClick={() => setModalOpen(true)} className="auth-btn">
@@ -204,7 +211,29 @@ export default function ProjectDetailsPage() {
         </div>
       </motion.div>
 
-      <JoinRequestModal open={modalOpen} onClose={() => setModalOpen(false)} projectId={id} />
+      <JoinRequestModal open={modalOpen} onClose={() => setModalOpen(false)} projectId={id} onSuccess={() => {
+        // Refresh project and request status
+        const fetchProject = async () => {
+          try {
+            const res = await api.get(`/projects/${id}`);
+            setProject(res.data);
+          } catch (error) {
+            console.error('Failed to fetch project:', error);
+          }
+        };
+        fetchProject();
+        
+        const fetchMyRequest = async () => {
+          try {
+            const res = await api.get('/join-requests/my');
+            const found = res.data.find(r => r.project?._id === id);
+            setMyRequest(found || null);
+          } catch (error) {
+            console.error('Failed to fetch my requests:', error);
+          }
+        };
+        fetchMyRequest();
+      }} />
       {isCreator && (
         <EditProjectModal open={editModalOpen} onClose={() => setEditModalOpen(false)} project={project} onSuccess={(updated) => setProject(updated)} />
       )}

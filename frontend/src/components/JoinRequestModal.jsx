@@ -5,7 +5,7 @@ import api from '../config/api';
 
 const { TextArea } = Input;
 
-export default function JoinRequestModal({ open, onClose, projectId }) {
+export default function JoinRequestModal({ open, onClose, projectId, onSuccess }) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
@@ -20,6 +20,7 @@ export default function JoinRequestModal({ open, onClose, projectId }) {
         
         await api.post(`/projects/${projectId}/join`, payload);
         message.success('Join request submitted successfully!');
+        if (onSuccess) onSuccess();
         form.resetFields();
         onClose();
       } catch (err) {
