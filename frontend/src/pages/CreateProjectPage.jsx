@@ -37,7 +37,12 @@ export default function CreateProjectPage() {
   const onFinish = async (values) => {
     try {
       setLoading(true);
-      await api.post('/projects', values);
+      // Ensure skills are sent as 'requiredSkills' to match backend model
+      const projectData = {
+        ...values,
+        requiredSkills: values.requiredSkills
+      };
+      await api.post('/projects', projectData);
       message.success('Project created successfully!');
       navigate('/dashboard/projects');
     } catch (error) {
@@ -107,7 +112,7 @@ export default function CreateProjectPage() {
 
               <div className="auth-grid-2">
                 <Form.Item
-                  name="skills"
+                  name="requiredSkills"
                   label="Core Technologies"
                   rules={[{ required: true, message: 'Select at least one skill' }]}
                 >
