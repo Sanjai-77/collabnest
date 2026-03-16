@@ -37,6 +37,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import api from '../config/api';
+import socket from '../config/socket';
 
 // Typography components destructured from Ant Design
 const { Paragraph } = Typography;
@@ -58,6 +59,38 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
   useEffect(() => {
     if (projectId) {
       fetchTasks();
+      
+      // Join project room for real-time task sync
+      socket.emit('join_room', projectId);
+
+      // Listen for task updates
+      const handleTaskUpdated = (updatedTask) => {
+        setTasks(prevTasks => prevTasks.map(t => 
+          t._id === updatedTask._id ? updatedTask : t
+        ));
+      };
+
+      socket.on('task_updated', handleTaskUpdated);
+
+      const handleTaskCreated = (newTask) => {
+        setTasks(prevTasks => {
+          if (prevTasks.find(t => t._id === newTask._id)) return prevTasks;
+          return [...prevTasks, newTask];
+        });
+      };
+
+      const handleTaskDeleted = (deletedTaskId) => {
+        setTasks(prevTasks => prevTasks.filter(t => t._id !== deletedTaskId));
+      };
+
+      socket.on('task_created', handleTaskCreated);
+      socket.on('task_deleted', handleTaskDeleted);
+
+      return () => {
+        socket.off('task_updated', handleTaskUpdated);
+        socket.off('task_created', handleTaskCreated);
+        socket.off('task_deleted', handleTaskDeleted);
+      };
     }
   }, [projectId]);
 

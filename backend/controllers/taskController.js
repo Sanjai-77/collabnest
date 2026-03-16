@@ -2,6 +2,7 @@ const Task = require('../models/Task');
 const Project = require('../models/Project');
 const { createNotification } = require('./notificationController');
 const { recordActivity } = require('./activityController');
+const socketModule = require('../socket');
 
 
 const getIo = () => {
@@ -55,10 +56,21 @@ const createTask = async (req, res) => {
       });
     }
 
+    // Emit socket event
+    emitTaskEvent(projectId, 'task_created', populatedTask);
+
     res.status(201).json(populatedTask);
   } catch (error) {
     console.error('Create task error:', error.message);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Helper for task controller to emit events
+const emitTaskEvent = (projectId, eventName, task) => {
+  const io = socketModule.getIo();
+  if (io) {
+    io.to(projectId.toString()).emit(eventName, task);
   }
 };
 
@@ -96,6 +108,9 @@ const updateTask = async (req, res) => {
       .populate('assignedTo', 'username email avatar')
       .populate('projectId', 'title');
 
+    // Emit task_updated event for real-time synchronization
+    emitTaskEvent(task.projectId, 'task_updated', updatedTask);
+
     // Record activity if completed
     if (req.body.status === 'completed') {
        await recordActivity(req.user._id, updatedTask.projectId._id, 'task_completed', `Completed task "${updatedTask.title}" in project "${updatedTask.projectId.title}"`);
@@ -120,6 +135,10 @@ const deleteTask = async (req, res) => {
     }
 
     await task.deleteOne();
+
+    // Emit task_deleted event
+    emitTaskEvent(task.projectId, 'task_deleted', req.params.taskId);
+
     res.status(200).json({ message: 'Task removed' });
   } catch (error) {
     console.error('Delete task error:', error.message);
