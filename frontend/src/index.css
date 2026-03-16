@@ -937,3 +937,108 @@ a { text-decoration: none; color: inherit; }
   0% { transform: scale(1); opacity: 0.5; }
   100% { transform: scale(3); opacity: 0; }
 }
+
+/* ===========================
+   RESPONSIVE UTILITIES
+   =========================== */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 64px;
+  }
+
+  .dashboard-main-content {
+    padding: 20px 16px;
+  }
+
+  .discovery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-grid-modern {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-title {
+    font-size: 36px;
+  }
+
+  .hero-cta {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-main-btn, .hero-sec-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .auth-card-modern {
+    padding: 32px 20px;
+  }
+
+  .kanban-board {
+    padding-bottom: 8px;
+  }
+
+  .discovery-header-premium {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .discovery-filters-bar {
+    flex-direction: column;
+  }
+
+  .discovery-select {
+    width: 100% !important;
+  }
+
+  /* Modal responsiveness */
+  .ant-modal {
+    max-width: calc(100vw - 32px) !important;
+    margin: 8px auto !important;
+    top: 20px !important;
+  }
+
+  .ant-modal-content {
+    padding: 12px !important;
+  }
+
+  /* Touch-friendly buttons and inputs */
+  .ant-btn, .ant-input, .ant-select-selector {
+    min-height: 44px; /* Apple/Google recommended touch target */
+  }
+
+  .sidebar-logo {
+    padding: 16px 20px;
+  }
+
+  .custom-menu .ant-menu-item {
+    height: 48px !important;
+    line-height: 48px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .stat-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .card-discovery-action {
+    opacity: 1;
+    transform: none;
+  }
+}

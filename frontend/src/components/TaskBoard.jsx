@@ -190,7 +190,8 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="kanban-board" style={{ display: 'flex', gap: 20, overflowX: 'auto', paddingBottom: 16 }}>
+        <div className="kanban-scroll-wrapper" style={{ overflowX: 'auto', paddingBottom: 16, margin: '0 -16px' }}>
+          <div className="kanban-board" style={{ display: 'flex', gap: 16, padding: '0 16px', minWidth: 'min-content' }}>
           {COLUMNS.map(column => (
             <div 
               key={column.id} 
@@ -389,6 +390,7 @@ export default function TaskBoard({ projectId, projectMembers = [] }) {
               </Droppable>
             </div>
           ))}
+        </div>
       </div>
     </DragDropContext>
 

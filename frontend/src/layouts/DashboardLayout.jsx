@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Layout, Menu, Button, Avatar, Badge, Popover, Dropdown, Input, List, Typography, notification } from 'antd';
+import { Layout, Menu, Button, Avatar, Badge, Popover, Dropdown, Input, List, Typography, notification, Drawer } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
 import { 
   LayoutDashboard, 
@@ -36,6 +36,8 @@ const menuItems = [
 
 export default function DashboardLayout() {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [user, setUser] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationsList, setNotificationsList] = useState([]);
@@ -47,6 +49,12 @@ export default function DashboardLayout() {
   const socketRef = useRef(null);
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      if (window.innerWidth > 768) setMobileMenuOpen(false);
+    };
+    window.addEventListener('resize', handleResize);
+
     const userStr = localStorage.getItem('user');
     if (userStr) {
       const parsedUser = JSON.parse(userStr);
@@ -60,6 +68,7 @@ export default function DashboardLayout() {
 
     return () => {
       socket.disconnect();
+      window.removeEventListener('resize', handleResize);
     };
   }, [navigate]);
 
@@ -180,58 +189,84 @@ export default function DashboardLayout() {
     </div>
   );
 
-  return (
-    <Layout style={{ minHeight: '100vh', background: 'var(--bg-app)' }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={setCollapsed}
-        width={260}
-        trigger={null}
-        theme={theme}
-        className="main-sider"
-        style={{
-          borderRight: '1px solid var(--border-color)',
-          background: 'var(--bg-sidebar)',
-          zIndex: 100,
-        }}
-      >
-        <div className="sidebar-logo">
-          <motion.div
-            animate={{ rotate: collapsed ? 0 : 360 }}
-            transition={{ duration: 0.5 }}
+  const sidebarContent = (
+    <>
+      <div className="sidebar-logo">
+        <motion.div
+          animate={{ rotate: collapsed ? 0 : 360 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Rocket className="logo-icon" size={28} />
+        </motion.div>
+        {(!collapsed || isMobile) && (
+          <motion.span
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="logo-gradient"
           >
-            <Rocket className="logo-icon" size={28} />
-          </motion.div>
-          {!collapsed && (
-            <motion.span
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="logo-gradient"
-            >
-              CollabNest
-            </motion.span>
-          )}
-        </div>
-        
-        <Menu
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-          onClick={({ key }) => navigate(key)}
-          style={{ background: 'transparent', borderRight: 'none' }}
-          className="custom-menu"
-        />
+            CollabNest
+          </motion.span>
+        )}
+      </div>
+      
+      <Menu
+        mode="inline"
+        selectedKeys={[location.pathname]}
+        items={menuItems}
+        onClick={({ key }) => {
+          navigate(key);
+          if (isMobile) setMobileMenuOpen(false);
+        }}
+        style={{ background: 'transparent', borderRight: 'none' }}
+        className="custom-menu"
+      />
 
-        <div className="sidebar-footer">
+      <div className="sidebar-footer">
+        {!isMobile && (
           <Button
             type="text"
             icon={collapsed ? <ChevronLeft size={20} style={{ transform: 'rotate(180deg)' }} /> : <ChevronLeft size={20} />}
             onClick={() => setCollapsed(!collapsed)}
             className="collapse-btn"
           />
-        </div>
-      </Sider>
+        )}
+      </div>
+    </>
+  );
+
+  return (
+    <Layout style={{ minHeight: '100vh', background: 'var(--bg-app)' }}>
+      {isMobile ? (
+        <Drawer
+          placement="left"
+          onClose={() => setMobileMenuOpen(false)}
+          open={mobileMenuOpen}
+          width={280}
+          bodyStyle={{ padding: 0, background: 'var(--bg-sidebar)' }}
+          headerStyle={{ display: 'none' }}
+        >
+          <div className="main-sider" style={{ height: '100%', background: 'var(--bg-sidebar)' }}>
+            {sidebarContent}
+          </div>
+        </Drawer>
+      ) : (
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={setCollapsed}
+          width={260}
+          trigger={null}
+          theme={theme}
+          className="main-sider"
+          style={{
+            borderRight: '1px solid var(--border-color)',
+            background: 'var(--bg-sidebar)',
+            zIndex: 100,
+          }}
+        >
+          {sidebarContent}
+        </Sider>
+      )}
 
       <Layout className="site-layout" style={{ background: 'var(--bg-app)' }}>
         <Header 
@@ -246,12 +281,19 @@ export default function DashboardLayout() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0 24px',
+            padding: isMobile ? '0 16px' : '0 24px',
             height: 'var(--header-height)'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            {collapsed && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 12 : 20 }}>
+            {isMobile ? (
+              <Button 
+                type="text" 
+                icon={<MenuIcon size={24} />} 
+                onClick={() => setMobileMenuOpen(true)}
+                style={{ color: 'var(--text-secondary)' }}
+              />
+            ) : collapsed && (
               <Button 
                 type="text" 
                 icon={<MenuIcon size={20} />} 
@@ -261,10 +303,10 @@ export default function DashboardLayout() {
             )}
             <Input
               prefix={<Search size={18} style={{ color: 'var(--text-muted)' }} />}
-              placeholder="Search anything..."
+              placeholder={isMobile ? "Search..." : "Search anything..."}
               className="header-search-modern"
               style={{ 
-                width: 320, 
+                width: isMobile ? 140 : 320, 
                 borderRadius: '8px',
                 background: 'var(--bg-card)',
                 border: '1px solid var(--border-color)',
