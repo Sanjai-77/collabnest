@@ -9,7 +9,7 @@ const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 
 const http = require('http');
-const { Server } = require('socket.io');
+const socketModule = require('./socket');
 const { execSync } = require('child_process');
 const Message = require('./models/Message');
 const Project = require('./models/Project');
@@ -38,54 +38,65 @@ connectDB().then(async () => {
 
 
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: ['http://localhost:5173', 'https://collabnest-obfx.vercel.app'],
-    credentials: true,
-  },
-});
 
-// Export io for use in controllers
-module.exports.io = io;
 
-// Security Middleware
-app.use(helmet());
-app.use(compression());
+// 1. TRUST PROXY (Required for Render/Vercel deployments to handle rate limiting correctly)
+app.set('trust proxy', 1);
 
-// Rate Limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: { message: 'Too many requests from this IP, please try again after 15 minutes' },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
 
-// Apply limiter to all API routes
-app.use('/api/', limiter);
-
-// Middleware
+// 2. CORS CONFIGURATION (Must be applied before any routes or other middleware)
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:3000',
   'https://collabnest-obfx.vercel.app'
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      console.log(`[CORS] Rejected origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   credentials: true,
+  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
+
+
+const server = http.createServer(app);
+
+// Initialize Socket.io via module
+const io = socketModule.init(server, allowedOrigins);
+
+// Security Middleware
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" } // Allow images/resources to be loaded cross-origin
+}));
+app.use(compression());
+
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { message: 'Too many requests from this IP, please try again after 15 minutes' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply limiter to all API routes AFTER CORS
+app.use('/api/', limiter);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Socket.io
+// Socket.io Events
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 

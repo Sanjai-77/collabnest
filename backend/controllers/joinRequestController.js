@@ -4,10 +4,7 @@ const { createNotification } = require('./notificationController');
 const { recordActivity } = require('./activityController');
 
 
-// Helper to get io instance
-const getIo = () => {
-  try { return require('../server').io; } catch { return null; }
-};
+const socketModule = require('../socket');
 
 // @desc    Create a join request
 // @route   POST /api/join-requests
@@ -18,7 +15,7 @@ const createJoinRequest = async (req, res) => {
 
     const project = await Project.findById(projectId).populate('createdBy', '_id username');
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      return res.status(404).json({ message: 'Project not found [createJoinRequest]' });
     }
 
     if (project.createdBy._id.toString() === req.user._id.toString()) {
@@ -52,7 +49,7 @@ const createJoinRequest = async (req, res) => {
 
 
     // Notify project leader
-    await createNotification(getIo(), {
+    await createNotification(socketModule.getIo(), {
       userId: project.createdBy._id,
       type: 'join_request',
       message: `${req.user.username} requested to join your project "${project.title}".`,
@@ -144,7 +141,7 @@ const updateJoinRequestStatus = async (req, res) => {
 
 
     // Notify the requesting user
-    await createNotification(getIo(), {
+    await createNotification(socketModule.getIo(), {
       userId: joinRequest.user._id,
       type: status === 'accepted' ? 'join_accepted' : 'join_rejected',
       message: status === 'accepted'

@@ -4,10 +4,7 @@ const { createNotification } = require('./notificationController');
 const { recordActivity } = require('./activityController');
 
 
-// Helper to get io instance
-const getIo = () => {
-  try { return require('../server').io; } catch { return null; }
-};
+const socketModule = require('../socket');
 
 // @desc    Create a new project
 // @route   POST /api/projects
@@ -16,7 +13,6 @@ const createProject = async (req, res) => {
   try {
     const { title, description, requiredSkills, teamSize } = req.body;
 
-    // Validate required fields
     if (!title || !description || !teamSize) {
       return res.status(400).json({ message: 'Please provide title, description, and teamSize' });
     }
@@ -26,21 +22,19 @@ const createProject = async (req, res) => {
       description,
       requiredSkills: requiredSkills || [],
       teamSize,
-      createdBy: req.user._id, // From auth middleware
+      createdBy: req.user._id,
       members: [req.user._id],
     });
 
-
     // Record activity
     await recordActivity(req.user._id, project._id, 'project_created', `Created a new project: "${title}"`);
-
 
     res.status(201).json({
       message: 'Project created successfully',
       project,
     });
   } catch (error) {
-    console.error('Create project error:', error.message);
+    console.error('[TRACE] ERROR in createProject:', error.message);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -122,8 +116,8 @@ const joinProject = async (req, res) => {
     const project = await Project.findById(req.params.id);
 
     if (!project) {
-      console.log('Project not found');
-      return res.status(404).json({ message: 'Project not found' });
+      console.log('Project not found [joinProject]');
+      return res.status(404).json({ message: 'Project not found [joinProject]' });
     }
 
     // Check if user is already a member
@@ -159,7 +153,7 @@ const joinProject = async (req, res) => {
     });
 
     // Notify project leader
-    await createNotification(getIo(), {
+    await createNotification(socketModule.getIo(), {
       userId: project.createdBy,
       type: 'join_request',
       message: `${req.user.username} requested to join your project "${project.title}".`,
