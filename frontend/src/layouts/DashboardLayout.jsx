@@ -101,6 +101,10 @@ export default function DashboardLayout() {
       socket.connect();
     }
 
+    // Clean up existing listeners to prevent duplicate triggers
+    socket.off('connect');
+    socket.off('new_notification');
+
     socket.on('connect', () => {
       socket.emit('join_user_room', userId);
     });
