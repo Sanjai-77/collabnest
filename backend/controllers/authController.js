@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Helper: Generate JWT token
 const generateToken = (id) => {
@@ -154,7 +157,7 @@ const updateProfile = async (req, res) => {
 // @access  Private
 const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).lean();
 
     if (user) {
       res.status(200).json({
@@ -176,9 +179,6 @@ const getProfile = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
-
-const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // @desc    Google Login
 // @route   POST /api/auth/google

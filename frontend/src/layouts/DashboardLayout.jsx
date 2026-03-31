@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Layout, Menu, Button, Avatar, Badge, Popover, Dropdown, Input, List, Typography, notification, Drawer } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
 import { 
@@ -147,7 +147,7 @@ export default function DashboardLayout() {
     ],
   };
 
-  const notificationContent = (
+  const notificationContent = useMemo(() => (
     <div style={{ width: 320 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <MuiTypography variant="subtitle2" sx={{ fontWeight: 600 }}>Notifications</MuiTypography>
@@ -187,9 +187,9 @@ export default function DashboardLayout() {
         />
       )}
     </div>
-  );
+  ), [notificationsList, navigate]);
 
-  const sidebarContent = (
+  const sidebarContent = useMemo(() => (
     <>
       <div className="sidebar-logo">
         <motion.div
@@ -232,7 +232,7 @@ export default function DashboardLayout() {
         )}
       </div>
     </>
-  );
+  ), [collapsed, isMobile, location.pathname, navigate]);
 
   return (
     <Layout style={{ minHeight: '100vh', background: 'var(--bg-app)' }}>

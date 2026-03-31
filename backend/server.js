@@ -19,20 +19,22 @@ const { recordActivity } = require('./controllers/activityController');
 
 // Connect to MongoDB
 connectDB().then(async () => {
-  try {
-    const projects = await Project.find();
-    let migratedCount = 0;
-    for (const project of projects) {
-      if (project.createdBy && !project.members.some(m => m.toString() === project.createdBy.toString())) {
-        project.members.push(project.createdBy);
-        await project.save();
-        migratedCount++;
+  if (process.env.RUN_MIGRATIONS === 'true') {
+    try {
+      const projects = await Project.find();
+      let migratedCount = 0;
+      for (const project of projects) {
+        if (project.createdBy && !project.members.some(m => m.toString() === project.createdBy.toString())) {
+          project.members.push(project.createdBy);
+          await project.save();
+          migratedCount++;
+        }
       }
-    }
 
-    if (migratedCount > 0) console.log(`Project members migration: updated ${migratedCount} projects`);
-  } catch (err) {
-    console.error('Migration error:', err);
+      if (migratedCount > 0) console.log(`Project members migration: updated ${migratedCount} projects`);
+    } catch (err) {
+      console.error('Migration error:', err);
+    }
   }
 });
 
