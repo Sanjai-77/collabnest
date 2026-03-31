@@ -114,7 +114,7 @@ export default function LoginPage() {
 
         <motion.div variants={item} className="auth-footer">
           <MuiTypography color="text.secondary">
-            Don't have an account? <Link to="/register" className="auth-link">Create an account for free</Link>
+            Don't have an account? <Link to="/register" className="auth-link">Create an account</Link>
           </MuiTypography>
         </motion.div>
       </motion.div>
