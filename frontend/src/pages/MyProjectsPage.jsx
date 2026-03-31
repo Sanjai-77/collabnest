@@ -2,38 +2,20 @@ import { useState, useEffect } from 'react';
 import { Card, Badge, Button, Tag, Avatar, Typography, Spin } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
-import { 
-  Rocket, 
-  Plus, 
-  Briefcase, 
-  Terminal, 
-  Users, 
-  ExternalLink 
-} from 'lucide-react';
+import { Rocket, Plus, Briefcase, Terminal, Users, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
-
-const { Paragraph } = Typography;
+import { staggerContainer, fadeInUp } from '../utils/motion';
 
 const tagColors = {
   React: 'blue', 'Node.js': 'green', Python: 'gold', 'Machine Learning': 'purple',
   Django: 'orange', PostgreSQL: 'geekblue',
 };
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+const { Paragraph } = Typography;
 
-const item = {
-  hidden: { y: 20, opacity: 0 },
-  show: { y: 0, opacity: 1 }
-};
+const container = staggerContainer();
+const item = fadeInUp;
 
 export default function MyProjectsPage() {
   const navigate = useNavigate();

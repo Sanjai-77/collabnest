@@ -6,8 +6,6 @@ import { Send, User, MessageSquare } from 'lucide-react';
 import api from '../config/api';
 import socket from '../config/socket';
 
-// Typography components destructured from Ant Design
-// Typography components destructured from Ant Design
 const { Paragraph } = Typography;
 
 export default function ChatInterface({ projectId, onNewMessage }) {

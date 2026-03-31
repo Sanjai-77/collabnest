@@ -1,20 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Button, Input, Select, Card, Badge, Avatar, Tag, Spin, Typography, message } from 'antd';
+import { Button, Input, Select, Card, Badge, Avatar, Tag, Spin, message } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
+import { Typography } from 'antd';
 import { motion } from 'framer-motion';
-import { 
-  Compass, 
-  Plus, 
-  Search, 
-  Filter, 
-  User, 
-  Users, 
-  ArrowRight 
-} from 'lucide-react';
+import { Compass, Plus, Search, Filter, User, Users, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
-
-const { Paragraph } = Typography;
+import { staggerContainer, fadeInUp } from '../utils/motion';
 
 const tagColors = {
   React: 'blue', 'Node.js': 'green', Python: 'gold', 'Machine Learning': 'purple',
@@ -22,20 +14,10 @@ const tagColors = {
   TypeScript: 'magenta', Docker: 'volcano', AWS: 'red', 'Data Science': 'purple',
 };
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+const { Paragraph } = Typography;
 
-const item = {
-  hidden: { y: 20, opacity: 0 },
-  show: { y: 0, opacity: 1 }
-};
+const container = staggerContainer();
+const item = fadeInUp;
 
 export default function ProjectsPage() {
   const navigate = useNavigate();

@@ -1,24 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Typography, Button, Tag, Space, Avatar, List, Card, Spin, message, Popconfirm } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
 import { 
-  ArrowLeft, 
-  ArrowRight, 
-  Clock, 
-  CheckCircle2, 
-  XCircle, 
-  User, 
-  Users, 
-  Layout, 
-  Edit3, 
-  Trash2,
-  Target
+  ArrowLeft, ArrowRight, Clock, CheckCircle2, XCircle, 
+  User, Users, Layout, Edit3, Trash2, Target
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import api from '../config/api';
 import JoinRequestModal from '../components/JoinRequestModal';
 import EditProjectModal from '../components/EditProjectModal';
+import { staggerContainer, fadeInUp } from '../utils/motion';
 
 const { Paragraph } = Typography;
 
@@ -28,20 +20,8 @@ const REQUEST_STATUS_CONFIG = {
   rejected: { color: 'red',    icon: <XCircle size={14} />, label: 'Rejected' },
 };
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const item = {
-  hidden: { y: 20, opacity: 0 },
-  show: { y: 0, opacity: 1 }
-};
+const container = staggerContainer();
+const item = fadeInUp;
 
 export default function ProjectDetailsPage() {
   const navigate = useNavigate();
@@ -56,31 +36,31 @@ export default function ProjectDetailsPage() {
   const isCreator = project?.createdBy?._id === currentUser._id;
   const isMember = project?.members?.some(m => m._id === currentUser._id);
 
+  const fetchProject = useCallback(async () => {
+    try {
+      const res = await api.get(`/projects/${id}`);
+      setProject(res.data);
+    } catch (error) {
+      console.error('Failed to fetch project:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  const fetchMyRequest = useCallback(async () => {
+    try {
+      const res = await api.get('/join-requests/my');
+      const found = res.data.find(r => r.project?._id === id);
+      setMyRequest(found || null);
+    } catch (error) {
+      console.error('Failed to fetch my requests:', error);
+    }
+  }, [id]);
+
   useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const res = await api.get(`/projects/${id}`);
-        setProject(res.data);
-      } catch (error) {
-        console.error('Failed to fetch project:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchMyRequest = async () => {
-      try {
-        const res = await api.get('/join-requests/my');
-        const found = res.data.find(r => r.project?._id === id);
-        setMyRequest(found || null);
-      } catch (error) {
-        console.error('Failed to fetch my requests:', error);
-      }
-    };
-
     fetchProject();
     fetchMyRequest();
-  }, [id]);
+  }, [fetchProject, fetchMyRequest]);
 
   if (loading) return <div style={{ textAlign: 'center', padding: '100px' }}><Spin size="large" /></div>;
   if (!project) return <div style={{ textAlign: 'center', padding: '100px', color: 'var(--text-secondary)' }}>Project not found</div>;
@@ -212,26 +192,7 @@ export default function ProjectDetailsPage() {
       </motion.div>
 
       <JoinRequestModal open={modalOpen} onClose={() => setModalOpen(false)} projectId={id} onSuccess={() => {
-        // Refresh project and request status
-        const fetchProject = async () => {
-          try {
-            const res = await api.get(`/projects/${id}`);
-            setProject(res.data);
-          } catch (error) {
-            console.error('Failed to fetch project:', error);
-          }
-        };
         fetchProject();
-        
-        const fetchMyRequest = async () => {
-          try {
-            const res = await api.get('/join-requests/my');
-            const found = res.data.find(r => r.project?._id === id);
-            setMyRequest(found || null);
-          } catch (error) {
-            console.error('Failed to fetch my requests:', error);
-          }
-        };
         fetchMyRequest();
       }} />
       {isCreator && (

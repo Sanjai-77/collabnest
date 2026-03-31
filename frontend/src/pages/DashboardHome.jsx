@@ -1,36 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Card, Row, Col, Typography, Button, Timeline, Empty } from 'antd';
+import { Card, Row, Col, Button, Timeline, Empty } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
-  FolderRoot, 
-  Clock, 
-  CheckCircle2, 
-  UserPlus, 
-  ArrowUpRight, 
-  TrendingUp, 
-  Activity 
+  FolderRoot, Clock, CheckCircle2, UserPlus, 
+  ArrowUpRight, TrendingUp, Activity 
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
+import { staggerContainer, fadeInUp } from '../utils/motion';
 
-// Typography components destructured from Ant Design
-const { Paragraph } = Typography;
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const item = {
-  hidden: { y: 20, opacity: 0 },
-  show: { y: 0, opacity: 1 }
-};
+const container = staggerContainer();
+const item = fadeInUp;
 
 export default function DashboardHome() {
   const [statsData, setStatsData] = useState({
@@ -70,8 +51,7 @@ export default function DashboardHome() {
     loadData();
     
     const interval = setInterval(() => {
-      fetchStats();
-      fetchActivities();
+      Promise.all([fetchStats(), fetchActivities()]);
     }, 30000);
     
     return () => clearInterval(interval);

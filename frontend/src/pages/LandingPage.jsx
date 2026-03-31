@@ -3,20 +3,10 @@ import { Typography as MuiTypography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  Rocket, 
-  Users, 
-  Layout, 
-  MessageSquare, 
-  CheckCircle, 
-  ArrowRight, 
-  Zap,
-  Globe,
-  Shield,
-  Star
+  Rocket, Users, Layout, MessageSquare, CheckCircle, 
+  ArrowRight, Zap, Globe, Shield, Star
 } from 'lucide-react';
-
-// Typography components destructured from Ant Design
-const { Paragraph } = Typography;
+import { staggerContainer, fadeInUp } from '../utils/motion';
 
 const features = [
   {
@@ -45,15 +35,7 @@ const features = [
   },
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15
-    }
-  }
-};
+const container = staggerContainer(0.15);
 
 const item = {
   hidden: { y: 30, opacity: 0 },

@@ -1,19 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Button, Empty, Spin, Badge, Tag, Typography, Avatar } from 'antd';
+import { Button, Empty, Spin, Badge, Tag, Avatar } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Bell, 
-  UserPlus, 
-  CheckCircle2, 
-  XCircle, 
-  Layout, 
-  MessageSquare,
-  CheckCheck
+  Bell, UserPlus, CheckCircle2, XCircle, 
+  Layout, MessageSquare, CheckCheck
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 import socket from '../config/socket';
+import { staggerContainer, fadeInLeft } from '../utils/motion';
 
 const TYPE_CONFIG = {
   join_request:     { icon: <UserPlus size={18} />,       color: 'blue',   label: 'Join Request' },
@@ -23,20 +19,8 @@ const TYPE_CONFIG = {
   chat_message:     { icon: <MessageSquare size={18} />,  color: 'cyan',   label: 'New Message' },
 };
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05
-    }
-  }
-};
-
-const item = {
-  hidden: { x: -20, opacity: 0 },
-  show: { x: 0, opacity: 1 }
-};
+const container = staggerContainer(0.05);
+const item = fadeInLeft;
 
 const timeAgo = (date) => {
   const diff = Date.now() - new Date(date).getTime();
@@ -67,17 +51,18 @@ export default function NotificationsPage() {
 
   useEffect(() => {
     fetchNotifications();
-    if (!socket.connected) {
-      socket.connect();
-    }
-    socket.emit('join_user_room', user._id);
-    socket.on('new_notification', (notification) => {
+
+    // Socket listeners — DashboardLayout already handles connect/join,
+    // so we just listen for new notifications here
+    const handleNewNotification = (notification) => {
       setNotifications(prev => [notification, ...prev]);
-    });
-    return () => {
-      socket.off('new_notification');
     };
-  }, [fetchNotifications, user._id]);
+    socket.on('new_notification', handleNewNotification);
+
+    return () => {
+      socket.off('new_notification', handleNewNotification);
+    };
+  }, [fetchNotifications]);
 
   const markAllRead = async () => {
     try {

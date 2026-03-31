@@ -4,19 +4,10 @@ import { Typography as MuiTypography } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../config/api';
 import { 
-  User, 
-  Check, 
-  X, 
-  Github, 
-  FileText, 
-  Clock, 
-  CheckCircle2, 
-  XCircle, 
-  Inbox, 
-  Send,
-  MessageSquare,
-  ArrowUpRight
+  User, Check, X, Github, FileText, Clock, 
+  CheckCircle2, XCircle, Inbox, Send, MessageSquare
 } from 'lucide-react';
+import { staggerContainer, fadeInUp } from '../utils/motion';
 
 const { Paragraph } = Typography;
 
@@ -26,20 +17,8 @@ const STATUS_CONFIG = {
   rejected: { icon: <XCircle size={14} />, color: 'red', label: 'Rejected' },
 };
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const item = {
-  hidden: { y: 20, opacity: 0 },
-  show: { y: 0, opacity: 1 }
-};
+const container = staggerContainer();
+const item = fadeInUp;
 
 export default function JoinRequestsPage() {
   const [incoming, setIncoming] = useState([]);

@@ -1,41 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { 
-  Tabs, 
-  Tag, 
-  Card, 
-  Descriptions, 
-  Avatar, 
-  List, 
-  Spin, 
-  Popconfirm, 
-  message, 
-  Badge, 
-  Typography, 
-  Divider,
-  Button
+  Tabs, Tag, Card, Descriptions, Avatar, List, Spin, 
+  Popconfirm, message, Badge, Typography, Divider, Button
 } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
 import { 
-  ChevronLeft, 
-  Settings, 
-  Trash2, 
-  Layout, 
-  MessageSquare, 
-  Users, 
-  Info,
-  Activity,
-  Calendar,
-  Layers
+  ChevronLeft, Settings, Trash2, Layout, MessageSquare, 
+  Users, Info, Activity, Calendar, Layers
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import api from '../config/api';
 import TaskBoard from '../components/TaskBoard';
 import ChatInterface from '../components/ChatInterface';
 import MembersTable from '../components/MembersTable';
 import EditProjectModal from '../components/EditProjectModal';
 
-// Typography components destructured from Ant Design
 const { Paragraph } = Typography;
 
 export default function WorkspacePage() {
@@ -47,7 +27,8 @@ export default function WorkspacePage() {
   const [unreadChatCount, setUnreadChatCount] = useState(0);
   const [activeTab, setActiveTab] = useState('overview');
 
-  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  // Parse once — avoids JSON.parse on every render
+  const currentUser = useMemo(() => JSON.parse(localStorage.getItem('user') || '{}'), []);
   const isCreator = String(project?.createdBy?._id || project?.createdBy) === String(currentUser._id);
 
   useEffect(() => {
@@ -75,7 +56,7 @@ export default function WorkspacePage() {
       }
     };
     fetchProject();
-    const interval = setInterval(fetchProject, 30000);
+    const interval = setInterval(fetchProject, 60000); // 60s — project metadata rarely changes
     return () => clearInterval(interval);
   }, [id, navigate, currentUser._id]);
 

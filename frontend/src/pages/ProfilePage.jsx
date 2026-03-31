@@ -3,20 +3,11 @@ import { Card, Form, Input, Select, Upload, Button, Avatar, Tag, message, Divide
 import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { 
-  User as UserIcon, 
-  Mail, 
-  Github, 
-  FileText, 
-  Edit3, 
-  Save, 
-  Upload as UploadIcon,
-  ShieldCheck,
-  Code2,
-  ExternalLink,
-  Camera,
-  Phone
+  User as UserIcon, Mail, Github, FileText, Edit3, Save, 
+  Upload as UploadIcon, ShieldCheck, Code2, ExternalLink, Camera, Phone
 } from 'lucide-react';
 import api from '../config/api';
+import { staggerContainer, fadeInUp } from '../utils/motion';
 
 const { Paragraph } = Typography;
 
@@ -26,20 +17,8 @@ const skillOptions = [
   'TypeScript', 'Go', 'Rust', 'Figma', 'UI/UX', 'Data Science',
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const item = {
-  hidden: { y: 20, opacity: 0 },
-  show: { y: 0, opacity: 1 }
-};
+const container = staggerContainer();
+const item = fadeInUp;
 
 export default function ProfilePage() {
   const [editing, setEditing] = useState(false);

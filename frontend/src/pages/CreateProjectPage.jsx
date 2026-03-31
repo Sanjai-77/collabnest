@@ -1,12 +1,11 @@
-import { Form, Input, InputNumber, Select, Button, Card, Typography, Space, message } from 'antd';
+import { Form, Input, InputNumber, Select, Button, Card, Typography, message } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Rocket, Users, Info, Sparkles } from 'lucide-react';
+import { ArrowLeft, Rocket, Users, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import api from '../config/api';
-
-const { Paragraph } = Typography;
+import { staggerContainer, fadeInUp } from '../utils/motion';
 const { TextArea } = Input;
 
 const skillOptions = [
@@ -15,20 +14,8 @@ const skillOptions = [
   'TypeScript', 'Go', 'Rust', 'Figma', 'UI/UX', 'Data Science',
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const item = {
-  hidden: { y: 20, opacity: 0 },
-  show: { y: 0, opacity: 1 }
-};
+const container = staggerContainer();
+const item = fadeInUp;
 
 export default function CreateProjectPage() {
   const navigate = useNavigate();

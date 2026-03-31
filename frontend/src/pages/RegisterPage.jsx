@@ -1,14 +1,12 @@
-import { Form, Input, Button, Select, Upload, message, Typography } from 'antd';
+import { Form, Input, Button, Select, Upload, message } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
-import { User, Mail, Lock, Github, UploadCloud, Rocket, ArrowRight } from 'lucide-react';
+import { User, Mail, Lock, Rocket, ArrowRight } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import GoogleLoginButton from '../components/GoogleLoginButton';
 import api from '../config/api';
-
-// Typography components destructured from Ant Design
-const { Paragraph } = Typography;
+import { staggerContainer, fadeInUp } from '../utils/motion';
 
 const skillOptions = [
   'React', 'Node.js', 'Python', 'Java', 'C++', 'Machine Learning',
@@ -16,20 +14,8 @@ const skillOptions = [
   'TypeScript', 'Go', 'Rust', 'Figma', 'UI/UX', 'Data Science',
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08
-    }
-  }
-};
-
-const item = {
-  hidden: { y: 20, opacity: 0 },
-  show: { y: 0, opacity: 1 }
-};
+const container = staggerContainer(0.08);
+const item = fadeInUp;
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -124,9 +110,9 @@ export default function RegisterPage() {
             </Form.Item>
           </Form>
 
-          <div style={{ margin: '24px 0', textAlign: 'center', position: 'relative' }}>
-            <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(255,255,255,0.1)', zIndex: 0 }}></div>
-            <span style={{ position: 'relative', padding: '0 12px', background: 'var(--card-bg)', color: 'var(--text-secondary)', fontSize: '13px', zIndex: 1 }}>Or continue with</span>
+          <div className="auth-divider">
+            <div className="auth-divider-line"></div>
+            <span className="auth-divider-text">Or continue with</span>
           </div>
 
           <GoogleLoginButton />
