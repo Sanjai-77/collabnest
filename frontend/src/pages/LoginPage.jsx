@@ -50,8 +50,8 @@ export default function LoginPage() {
             <Rocket size={32} color="var(--primary)" />
             <span className="logo-gradient">CollabNest</span>
           </div>
-          <MuiTypography variant="h4" sx={{ marginTop: '24px', marginBottom: '8px', fontWeight: 700 }}>Welcome back</MuiTypography>
-          <MuiTypography color="text.secondary">Enter your credentials to access your workspace</MuiTypography>
+          <MuiTypography variant="h4" sx={{ marginTop: '24px', marginBottom: '8px', fontWeight: 700, color: 'var(--text-primary)' }}>Welcome back</MuiTypography>
+          <MuiTypography sx={{ color: 'var(--text-secondary)' }}>Enter your credentials to access your workspace</MuiTypography>
         </motion.div>
 
         <motion.div variants={item} style={{ marginTop: 32 }}>
@@ -86,7 +86,7 @@ export default function LoginPage() {
             </Form.Item>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <Checkbox><MuiTypography color="text.secondary" sx={{ fontSize: '13px', display: 'inline' }}>Remember me</MuiTypography></Checkbox>
+              <Checkbox><MuiTypography sx={{ color: 'var(--text-secondary)', fontSize: '13px', display: 'inline' }}>Remember me</MuiTypography></Checkbox>
               <Link to="#" className="forgot-link">Forgot password?</Link>
             </div>
 
@@ -113,7 +113,7 @@ export default function LoginPage() {
         </motion.div>
 
         <motion.div variants={item} className="auth-footer">
-          <MuiTypography color="text.secondary">
+          <MuiTypography sx={{ color: 'var(--text-secondary)' }}>
             Don't have an account? <Link to="/register" className="auth-link">Create an account</Link>
           </MuiTypography>
         </motion.div>

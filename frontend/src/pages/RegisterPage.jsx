@@ -60,8 +60,8 @@ export default function RegisterPage() {
             <Rocket size={32} color="var(--primary)" />
             <span className="logo-gradient">CollabNest</span>
           </div>
-          <MuiTypography variant="h4" sx={{ marginTop: '24px', marginBottom: '8px', fontWeight: 700 }}>Create your account</MuiTypography>
-          <MuiTypography color="text.secondary">Join the community of student collaborators</MuiTypography>
+          <MuiTypography variant="h4" sx={{ marginTop: '24px', marginBottom: '8px', fontWeight: 700, color: 'var(--text-primary)' }}>Create an account</MuiTypography>
+          <MuiTypography sx={{ color: 'var(--text-secondary)' }}>Join CollabNest and start your project journey</MuiTypography>
         </motion.div>
 
         <motion.div variants={item} style={{ marginTop: 32 }}>
@@ -118,9 +118,9 @@ export default function RegisterPage() {
           <GoogleLoginButton />
         </motion.div>
 
-        <motion.div variants={item} className="auth-footer">
-          <MuiTypography color="text.secondary">
-            Already have an account? <Link to="/login" className="auth-link">Sign in</Link>
+        <motion.div variants={item} className="auth-footer" style={{ marginTop: 24 }}>
+          <MuiTypography sx={{ color: 'var(--text-secondary)' }}>
+            Already have an account? <Link to="/login" className="auth-link">Sign in here</Link>
           </MuiTypography>
         </motion.div>
       </motion.div>

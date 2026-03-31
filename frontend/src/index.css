@@ -501,6 +501,18 @@ a { text-decoration: none; color: inherit; }
   border-radius: 12px !important;
   height: 48px !important;
 }
+.modern-input input {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+}
+.modern-input input:-webkit-autofill,
+.modern-input input:-webkit-autofill:hover, 
+.modern-input input:-webkit-autofill:focus, 
+.modern-input input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 40px var(--bg-card) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
 .modern-input:hover, .modern-input:focus { border-color: var(--primary) !important; }
 .input-icon { color: var(--text-muted); margin-right: 8px; }
 
