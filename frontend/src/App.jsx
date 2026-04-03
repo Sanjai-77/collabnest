@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ConfigProvider, theme as antdTheme } from 'antd';
-import { ThemeProvider, useTheme } from './components/ThemeContext';
-import { lazy, Suspense } from 'react';
+import { ThemeProvider as AppThemeProvider, useTheme } from './components/ThemeContext';
+import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
+import { lazy, Suspense, useMemo } from 'react';
 import { Spin } from 'antd';
 
 // Eager-load entry points (landing + auth) for instant first paint
@@ -37,7 +38,27 @@ const PageLoader = () => (
 function AppContent() {
   const { theme } = useTheme();
 
+  // MUI theme synced with the app's dark/light mode
+  const muiTheme = useMemo(() => createTheme({
+    palette: {
+      mode: theme === 'dark' ? 'dark' : 'light',
+      primary: { main: '#8b5cf6' },
+      background: {
+        default: theme === 'dark' ? '#030409' : '#f6f8fa',
+        paper: theme === 'dark' ? '#0c0e1a' : '#ffffff',
+      },
+      text: {
+        primary: theme === 'dark' ? '#f8fafc' : '#1f2328',
+        secondary: theme === 'dark' ? '#94a3b8' : '#57606a',
+      },
+    },
+    typography: {
+      fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+    },
+  }), [theme]);
+
   return (
+    <MuiThemeProvider theme={muiTheme}>
     <ConfigProvider
       theme={{
         algorithm: theme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
@@ -74,14 +95,15 @@ function AppContent() {
         </Suspense>
       </BrowserRouter>
     </ConfigProvider>
+    </MuiThemeProvider>
   );
 }
 
 function App() {
   return (
-    <ThemeProvider>
+    <AppThemeProvider>
       <AppContent />
-    </ThemeProvider>
+    </AppThemeProvider>
   );
 }
 
