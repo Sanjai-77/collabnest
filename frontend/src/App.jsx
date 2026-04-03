@@ -21,6 +21,7 @@ const JoinRequestsPage = lazy(() => import('./pages/JoinRequestsPage'));
 const WorkspacePage = lazy(() => import('./pages/WorkspacePage'));
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const EditProfilePage = lazy(() => import('./pages/EditProfilePage'));
 
 // Full-screen loading fallback while lazy chunks are being fetched
 const PageLoader = () => (
@@ -90,6 +91,7 @@ function AppContent() {
               <Route path="workspace/:id" element={<WorkspacePage />} />
               <Route path="notifications" element={<NotificationsPage />} />
               <Route path="profile" element={<ProfilePage />} />
+              <Route path="edit-profile" element={<EditProfilePage />} />
             </Route>
           </Routes>
         </Suspense>

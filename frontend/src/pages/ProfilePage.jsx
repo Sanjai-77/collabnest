@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Card, Form, Input, Select, Upload, Button, Avatar, Tag, message, Divider, Typography, Space, Modal } from 'antd';
+import { Card, Tag, Divider, Typography, Avatar, Button } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { 
-  User as UserIcon, Mail, Github, FileText, Edit3, Save, 
-  Upload as UploadIcon, ShieldCheck, Code2, ExternalLink, Camera, Phone
+  User as UserIcon, Mail, Github, FileText, Edit3, 
+  ShieldCheck, Code2, ExternalLink, Camera, Phone
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
-import useSkills from '../hooks/useSkills';
 import { staggerContainer, fadeInUp } from '../utils/motion';
 
 const { Paragraph } = Typography;
@@ -16,13 +16,8 @@ const container = staggerContainer();
 const item = fadeInUp;
 
 export default function ProfilePage() {
-  const [editing, setEditing] = useState(false);
-  const [form] = Form.useForm();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [newImageFile, setNewImageFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const { skillOptions, loading: skillsLoading } = useSkills();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -37,84 +32,6 @@ export default function ProfilePage() {
     };
     fetchProfile();
   }, []);
-
-  useEffect(() => {
-    if (editing && profile) {
-      form.setFieldsValue(profile);
-    }
-  }, [editing, profile, form]);
-
-  const handleSave = () => {
-    form.validateFields().then(async (values) => {
-      setUploading(true);
-      try {
-        let profileImageUrl = profile.profileImage;
-
-        // 1. Handle image upload if a new file was selected
-        if (newImageFile) {
-          const formData = new FormData();
-          formData.append('image', newImageFile);
-          const uploadRes = await api.post('/users/upload-profile', formData);
-          profileImageUrl = uploadRes.data.profileImage;
-        }
-
-        // 2. Update profile details
-        const payload = { 
-          username: values.username,
-          bio: values.bio,
-          skills: values.skills,
-          profileImage: profileImageUrl
-        };
-
-        const res = await api.put('/users/update-profile', payload);
-        
-        message.success('Profile updated successfully!');
-        const updatedUser = { ...profile, ...res.data.user };
-        setProfile(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        
-        // Dispatch storage event to notify other tabs/layout
-        window.dispatchEvent(new Event('storage'));
-        
-        setEditing(false);
-        setNewImageFile(null);
-        setPreviewUrl(null);
-      } catch (error) {
-        console.error('Profile update error:', error);
-        message.error(error.response?.data?.message || 'Failed to update profile');
-      } finally {
-        setUploading(false);
-      }
-    });
-  };
-
-  const handleFileSelect = (file) => {
-    setNewImageFile(file);
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    return false; // Prevent auto-upload
-  };
-
-  const handleAvatarUpload = async (options) => {
-    const { file, onSuccess, onError } = options;
-    setUploading(true);
-    const formData = new FormData();
-    formData.append('image', file);
-    try {
-      const res = await api.post('/users/upload-profile', formData);
-      const newProfile = { ...profile, profileImage: res.data.profileImage };
-      setProfile(newProfile);
-      localStorage.setItem('user', JSON.stringify(newProfile));
-      message.success('Profile photo updated!');
-      onSuccess("ok");
-    } catch (err) {
-      console.error('Avatar upload error:', err);
-      message.error('Failed to upload image');
-      onError({ err });
-    } finally {
-      setUploading(false);
-    }
-  };
 
   if (!profile) return null;
 
@@ -134,15 +51,18 @@ export default function ProfilePage() {
           <Card className="profile-card-premium">
             <div className="profile-hero-modern">
               <div className="profile-avatar-wrapper">
-                <Avatar size={100} src={profile.profileImage || profile.avatar} icon={uploading ? null : <UserIcon size={40} />} className="profile-avatar-main" style={{ backgroundColor: 'var(--primary)' }} />
-                <Upload
-                  customRequest={handleAvatarUpload}
-                  showUploadList={false}
-                  accept="image/*"
-                  disabled={uploading}
-                >
-                  <Button icon={uploading ? <Save size={16} className="spinner" /> : <Camera size={16} />} className="avatar-edit-btn" loading={uploading} />
-                </Upload>
+                <Avatar 
+                  size={100} 
+                  src={profile.profileImage || profile.avatar} 
+                  icon={<UserIcon size={40} />} 
+                  className="profile-avatar-main" 
+                  style={{ backgroundColor: 'var(--primary)' }} 
+                />
+                <Button 
+                  icon={<Camera size={16} />} 
+                  className="avatar-edit-btn" 
+                  onClick={() => navigate('/dashboard/edit-profile')}
+                />
               </div>
               <div className="profile-info-main">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -157,14 +77,13 @@ export default function ProfilePage() {
                       </MuiTypography>
                     )}
                   </div>
-                  {!editing ? (
-                    <Button icon={<Edit3 size={16} />} onClick={() => setEditing(true)} className="hero-sec-btn">Edit Profile</Button>
-                  ) : (
-                    <Space>
-                      <Button onClick={() => setEditing(false)} className="shortcut-btn" style={{ background: 'transparent' }}>Cancel</Button>
-                      <Button type="primary" icon={<Save size={16} />} onClick={handleSave} className="auth-btn">Save Changes</Button>
-                    </Space>
-                  )}
+                  <Button 
+                    icon={<Edit3 size={16} />} 
+                    onClick={() => navigate('/dashboard/edit-profile')} 
+                    className="hero-sec-btn"
+                  >
+                    Edit Profile
+                  </Button>
                 </div>
               </div>
             </div>
@@ -221,79 +140,6 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-
-            <Modal
-              title="Edit Profile"
-              open={editing}
-              onCancel={() => {
-                setEditing(false);
-                setNewImageFile(null);
-                setPreviewUrl(null);
-              }}
-              onOk={handleSave}
-              confirmLoading={uploading}
-              width={600}
-              centered
-              okText="Save Changes"
-              okButtonProps={{ className: 'auth-btn' }}
-              cancelButtonProps={{ className: 'shortcut-btn' }}
-              className="profile-edit-modal"
-            >
-              <Form
-                form={form}
-                layout="vertical"
-                initialValues={profile}
-                requiredMark={false}
-                style={{ marginTop: 24 }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-                  <div className="profile-avatar-wrapper" style={{ position: 'relative' }}>
-                    <Avatar 
-                      size={100} 
-                      src={previewUrl || profile.profileImage || profile.avatar} 
-                      icon={<UserIcon size={40} />} 
-                      style={{ backgroundColor: 'var(--primary)' }} 
-                    />
-                    <Upload
-                      beforeUpload={handleFileSelect}
-                      showUploadList={false}
-                      accept="image/*"
-                    >
-                      <Button 
-                        icon={<Camera size={16} />} 
-                        className="avatar-edit-btn" 
-                        style={{ position: 'absolute', bottom: 0, right: 0 }}
-                      />
-                    </Upload>
-                  </div>
-                </div>
-
-                <div className="auth-grid-2">
-                  <Form.Item name="username" label="Username" rules={[{ required: true }]}>
-                    <Input prefix={<UserIcon size={16} className="input-icon" />} size="large" className="modern-input" />
-                  </Form.Item>
-                  <Form.Item name="phone" label="Phone Number">
-                    <Input prefix={<Phone size={16} className="input-icon" />} size="large" className="modern-input" placeholder="+1..." />
-                  </Form.Item>
-                </div>
-                
-                <Form.Item name="bio" label="About Me">
-                  <Input.TextArea rows={4} placeholder="Describe your background and interests..." className="modern-input" />
-                </Form.Item>
-
-                <Form.Item name="skills" label="Technical Skills">
-                  <Select
-                    mode="tags"
-                    placeholder="Select your core skills"
-                    size="large"
-                    className="modern-select"
-                    loading={skillsLoading}
-                    options={skillOptions}
-                    tokenSeparators={[',']}
-                  />
-                </Form.Item>
-              </Form>
-            </Modal>
           </Card>
         </motion.div>
       </motion.div>
