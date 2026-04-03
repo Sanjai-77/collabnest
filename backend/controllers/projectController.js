@@ -1,4 +1,5 @@
 const Project = require('../models/Project');
+const Skill = require('../models/Skill');
 const JoinRequest = require('../models/JoinRequest');
 const { createNotification } = require('./notificationController');
 const { recordActivity } = require('./activityController');
@@ -17,14 +18,34 @@ const createProject = async (req, res) => {
       return res.status(400).json({ message: 'Please provide title, description, and teamSize' });
     }
 
+    const skills = requiredSkills || [];
+
     const project = await Project.create({
       title,
       description,
-      requiredSkills: requiredSkills || [],
+      requiredSkills: skills,
       teamSize,
       createdBy: req.user._id,
       members: [req.user._id],
     });
+
+    // Auto-add any new skills to the global skills collection
+    if (skills.length > 0) {
+      try {
+        const existingSkills = await Skill.find({ name: { $in: skills } }).lean();
+        const existingNames = new Set(existingSkills.map(s => s.name));
+        const newSkills = skills
+          .filter(s => !existingNames.has(s))
+          .map(s => ({ name: s.trim(), category: 'Other' }));
+
+        if (newSkills.length > 0) {
+          await Skill.insertMany(newSkills, { ordered: false }).catch(() => {});
+        }
+      } catch (skillErr) {
+        // Non-critical — don't fail project creation if skill auto-add fails
+        console.error('Auto-add skills warning:', skillErr.message);
+      }
+    }
 
     // Record activity
     await recordActivity(req.user._id, project._id, 'project_created', `Created a new project: "${title}"`);
@@ -44,7 +65,37 @@ const createProject = async (req, res) => {
 // @access  Public
 const getProjects = async (req, res) => {
   try {
-    const projects = await Project.find()
+    const { search, skills } = req.query;
+    const filter = {};
+
+    // Build search filter: regex on title & description, plus $in on requiredSkills
+    if (search && search.trim()) {
+      const regex = new RegExp(search.trim(), 'i');
+      filter.$or = [
+        { title: regex },
+        { description: regex },
+        { requiredSkills: regex },
+      ];
+    }
+
+    // Build skills filter: exact match using $in
+    if (skills && skills.trim()) {
+      const skillList = skills.split(',').map(s => s.trim()).filter(Boolean);
+      if (skillList.length > 0) {
+        // If search already set $or, combine with $and; otherwise just add $in
+        if (filter.$or) {
+          filter.$and = [
+            { $or: filter.$or },
+            { requiredSkills: { $in: skillList } },
+          ];
+          delete filter.$or;
+        } else {
+          filter.requiredSkills = { $in: skillList };
+        }
+      }
+    }
+
+    const projects = await Project.find(filter)
       .populate('createdBy', 'username email')
       .populate('members', 'username email skills github avatar role')
       .sort({ createdAt: -1 });

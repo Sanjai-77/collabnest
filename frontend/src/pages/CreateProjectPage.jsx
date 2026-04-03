@@ -5,14 +5,9 @@ import { ArrowLeft, Rocket, Users, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import api from '../config/api';
+import useSkills, { invalidateSkillsCache } from '../hooks/useSkills';
 import { staggerContainer, fadeInUp } from '../utils/motion';
 const { TextArea } = Input;
-
-const skillOptions = [
-  'React', 'Node.js', 'Python', 'Java', 'C++', 'Machine Learning',
-  'Flutter', 'Django', 'MongoDB', 'PostgreSQL', 'Docker', 'AWS',
-  'TypeScript', 'Go', 'Rust', 'Figma', 'UI/UX', 'Data Science',
-];
 
 const container = staggerContainer();
 const item = fadeInUp;
@@ -20,6 +15,7 @@ const item = fadeInUp;
 export default function CreateProjectPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { skillOptions, loading: skillsLoading } = useSkills();
 
   const onFinish = async (values) => {
     try {
@@ -30,6 +26,7 @@ export default function CreateProjectPage() {
         requiredSkills: values.requiredSkills
       };
       await api.post('/projects', projectData);
+      invalidateSkillsCache(); // Refresh cache in case new skills were auto-added
       message.success('Project created successfully!');
       navigate('/dashboard/projects');
     } catch (error) {
@@ -104,11 +101,13 @@ export default function CreateProjectPage() {
                   rules={[{ required: true, message: 'Select at least one skill' }]}
                 >
                   <Select
-                    mode="multiple"
+                    mode="tags"
                     placeholder="Search or select skills..."
                     size="large"
                     className="modern-select"
-                    options={skillOptions.map(s => ({ label: s, value: s }))}
+                    loading={skillsLoading}
+                    options={skillOptions}
+                    tokenSeparators={[',']}
                   />
                 </Form.Item>
 

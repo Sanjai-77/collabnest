@@ -7,15 +7,10 @@ import {
   Upload as UploadIcon, ShieldCheck, Code2, ExternalLink, Camera, Phone
 } from 'lucide-react';
 import api from '../config/api';
+import useSkills from '../hooks/useSkills';
 import { staggerContainer, fadeInUp } from '../utils/motion';
 
 const { Paragraph } = Typography;
-
-const skillOptions = [
-  'React', 'Node.js', 'Python', 'Java', 'C++', 'Machine Learning',
-  'Flutter', 'Django', 'MongoDB', 'PostgreSQL', 'Docker', 'AWS',
-  'TypeScript', 'Go', 'Rust', 'Figma', 'UI/UX', 'Data Science',
-];
 
 const container = staggerContainer();
 const item = fadeInUp;
@@ -24,6 +19,7 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [form] = Form.useForm();
   const [profile, setProfile] = useState(null);
+  const { skillOptions, loading: skillsLoading } = useSkills();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -144,11 +140,13 @@ export default function ProfilePage() {
 
                 <Form.Item name="skills" label="Technical Skills">
                   <Select
-                    mode="multiple"
+                    mode="tags"
                     placeholder="Select your core skills"
                     size="large"
                     className="modern-select"
-                    options={skillOptions.map(s => ({ label: s, value: s }))}
+                    loading={skillsLoading}
+                    options={skillOptions}
+                    tokenSeparators={[',']}
                   />
                 </Form.Item>
 

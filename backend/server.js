@@ -172,6 +172,7 @@ app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/activities', require('./routes/activityRoutes'));
+app.use('/api/skills', require('./routes/skillRoutes'));
 
 
 

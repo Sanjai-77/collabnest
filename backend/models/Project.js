@@ -40,6 +40,7 @@ const projectSchema = new mongoose.Schema(
 projectSchema.index({ createdBy: 1 });
 projectSchema.index({ members: 1 });
 projectSchema.index({ title: 'text' }); // For title searches
+projectSchema.index({ requiredSkills: 1 }); // For skill-based filtering
 projectSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('Project', projectSchema);

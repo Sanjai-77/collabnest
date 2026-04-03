@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button, Input, Select, Card, Badge, Avatar, Tag, Spin, message } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
 import { Typography } from 'antd';
@@ -6,13 +6,8 @@ import { motion } from 'framer-motion';
 import { Compass, Plus, Search, Filter, User, Users, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
+import useSkills from '../hooks/useSkills';
 import { staggerContainer, fadeInUp } from '../utils/motion';
-
-const tagColors = {
-  React: 'blue', 'Node.js': 'green', Python: 'gold', 'Machine Learning': 'purple',
-  Flutter: 'cyan', MongoDB: 'lime', Django: 'orange', PostgreSQL: 'geekblue',
-  TypeScript: 'magenta', Docker: 'volcano', AWS: 'red', 'Data Science': 'purple',
-};
 
 const { Paragraph } = Typography;
 
@@ -24,28 +19,51 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [skillFilter, setSkillFilter] = useState(null);
+  const [skillFilter, setSkillFilter] = useState([]);
+  const { skillOptions, loading: skillsLoading } = useSkills();
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const res = await api.get('/projects');
-        setProjects(res.data);
-      } catch (error) {
-        console.error('Failed to fetch projects:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProjects();
+  // Debounce timer ref
+  const debounceRef = useRef(null);
+
+  // Fetch projects from backend with search/filter params
+  const fetchProjects = useCallback(async (search, skills) => {
+    try {
+      setLoading(true);
+      const params = {};
+      if (search && search.trim()) params.search = search.trim();
+      if (skills && skills.length > 0) params.skills = skills.join(',');
+
+      const res = await api.get('/projects', { params });
+      setProjects(res.data);
+    } catch (error) {
+      console.error('Failed to fetch projects:', error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const filteredProjects = projects.filter(p => {
-    const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         p.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSkill = !skillFilter || (p.requiredSkills && p.requiredSkills.includes(skillFilter));
-    return matchesSearch && matchesSkill;
-  });
+  // Initial load — no filters
+  useEffect(() => {
+    fetchProjects('', []);
+  }, [fetchProjects]);
+
+  // Debounced search
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchProjects(value, skillFilter);
+    }, 400);
+  };
+
+  // Immediate filter on skill selection
+  const handleSkillFilterChange = (values) => {
+    setSkillFilter(values || []);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    fetchProjects(searchQuery, values || []);
+  };
 
   return (
     <div className="projects-discovery-modern">
@@ -73,20 +91,25 @@ export default function ProjectsPage() {
       <div className="discovery-filters-bar">
         <Input
           prefix={<Search size={18} className="input-icon" />}
-          placeholder="Search by title, stack, or keywords..."
+          placeholder="Search by title, description, or skills..."
           size="large"
           className="modern-input discovery-search"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleSearchChange}
+          allowClear
         />
         <Select
-          placeholder="Filter by Skill"
+          mode="multiple"
+          placeholder="Filter by Skills"
           size="large"
           className="modern-select discovery-select"
           allowClear
           suffixIcon={<Filter size={16} />}
-          onChange={setSkillFilter}
-          options={Object.keys(tagColors).map(s => ({ label: s, value: s }))}
+          onChange={handleSkillFilterChange}
+          value={skillFilter}
+          loading={skillsLoading}
+          options={skillOptions}
+          maxTagCount="responsive"
         />
       </div>
 
@@ -95,7 +118,7 @@ export default function ProjectsPage() {
           <Spin size="large" />
           <MuiTypography color="text.secondary">Curating your project feed...</MuiTypography>
         </div>
-      ) : filteredProjects.length === 0 ? (
+      ) : projects.length === 0 ? (
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -103,7 +126,7 @@ export default function ProjectsPage() {
         >
           <Compass size={64} className="empty-icon" />
           <MuiTypography variant="h6" sx={{ fontWeight: 600 }}>No projects matched your search</MuiTypography>
-          <MuiTypography color="text.secondary">Try broad terms or different skills to find more projects.</MuiTypography>
+          <MuiTypography color="text.secondary">Try broader terms or different skills to find more projects.</MuiTypography>
         </motion.div>
       ) : (
         <motion.div 
@@ -112,7 +135,7 @@ export default function ProjectsPage() {
           animate="show"
           className="discovery-grid"
         >
-          {filteredProjects.map((p) => (
+          {projects.map((p) => (
             <motion.div key={p._id} variants={item}>
               <Card 
                 className="discovery-card-premium"
