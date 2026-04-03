@@ -64,6 +64,26 @@ export default function ProfilePage() {
     });
   };
 
+  const handleAvatarUpload = async (options) => {
+    const { file, onSuccess, onError } = options;
+    const formData = new FormData();
+    formData.append('image', file);
+    try {
+      const res = await api.post('/users/upload-profile', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      const newProfile = { ...profile, profileImage: res.data.profileImage };
+      setProfile(newProfile);
+      localStorage.setItem('user', JSON.stringify(newProfile));
+      message.success('Profile photo updated!');
+      onSuccess("ok");
+    } catch (err) {
+      console.error('Avatar upload error:', err);
+      message.error('Failed to upload image');
+      onError({ err });
+    }
+  };
+
   if (!profile) return null;
 
   return (
@@ -82,8 +102,14 @@ export default function ProfilePage() {
           <Card className="profile-card-premium">
             <div className="profile-hero-modern">
               <div className="profile-avatar-wrapper">
-                <Avatar size={100} src={profile.avatar} icon={<UserIcon size={40} />} className="profile-avatar-main" />
-                <Button icon={<Camera size={16} />} className="avatar-edit-btn" />
+                <Avatar size={100} src={profile.profileImage || profile.avatar} icon={<UserIcon size={40} />} className="profile-avatar-main" style={{ backgroundColor: 'var(--primary)' }} />
+                <Upload
+                  customRequest={handleAvatarUpload}
+                  showUploadList={false}
+                  accept="image/*"
+                >
+                  <Button icon={<Camera size={16} />} className="avatar-edit-btn" />
+                </Upload>
               </div>
               <div className="profile-info-main">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>

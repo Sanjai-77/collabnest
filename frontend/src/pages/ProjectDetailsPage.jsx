@@ -35,6 +35,7 @@ export default function ProjectDetailsPage() {
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const isCreator = project?.createdBy?._id === currentUser._id;
   const isMember = project?.members?.some(m => m._id === currentUser._id);
+  const isRemoved = project?.removedUsers?.some(r => r.userId === currentUser._id);
 
   const fetchProject = useCallback(async () => {
     try {
@@ -85,6 +86,21 @@ export default function ProjectDetailsPage() {
         </Button>
       );
     }
+    
+    // If the user was removed, they can request again (unless they have a new pending request)
+    if (isRemoved) {
+      return (
+        <Space direction="vertical" align="end" size={2}>
+          <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
+            You were removed from this project earlier.
+          </Typography.Text>
+          <Button type="primary" size="large" onClick={() => setModalOpen(true)} className="auth-btn" style={{ backgroundColor: 'var(--warning-color)' }}>
+            Request Again <ArrowRight size={18} style={{ marginLeft: 8 }} />
+          </Button>
+        </Space>
+      );
+    }
+
     if (myRequest && myRequest.status !== 'pending') {
        const cfg = REQUEST_STATUS_CONFIG[myRequest.status] || REQUEST_STATUS_CONFIG.pending;
        return (

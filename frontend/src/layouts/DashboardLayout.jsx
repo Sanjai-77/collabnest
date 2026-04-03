@@ -305,17 +305,19 @@ export default function DashboardLayout() {
                 style={{ color: 'var(--text-secondary)' }}
               />
             )}
-            <Input
-              prefix={<Search size={18} style={{ color: 'var(--text-muted)' }} />}
-              placeholder={isMobile ? "Search..." : "Search anything..."}
-              className="header-search-modern"
-              style={{ 
-                width: isMobile ? 140 : 320, 
-                borderRadius: '8px',
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-color)',
-              }}
-            />
+            {location.pathname !== '/dashboard' && (
+              <Input
+                prefix={<Search size={18} style={{ color: 'var(--text-muted)' }} />}
+                placeholder={isMobile ? "Search..." : "Search anything..."}
+                className="header-search-modern"
+                style={{ 
+                  width: isMobile ? 140 : 320, 
+                  borderRadius: '8px',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
+                }}
+              />
+            )}
           </div>
 
           <div className="header-actions">
@@ -348,7 +350,7 @@ export default function DashboardLayout() {
             <Dropdown menu={avatarMenu} trigger={['click']} placement="bottomRight">
               <div className="user-profile-trigger">
                 <Avatar
-                  src={user?.avatar}
+                  src={user?.profileImage || user?.avatar}
                   icon={<User size={18} />}
                   style={{ backgroundColor: 'var(--primary)' }}
                 />

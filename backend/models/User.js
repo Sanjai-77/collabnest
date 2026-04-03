@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    profileImage: {
+      type: String,
+      default: '',
+    },
     provider: {
       type: String,
       enum: ['email', 'google'],

@@ -99,6 +99,7 @@ const loginUser = async (req, res) => {
         resume: user.resume,
         bio: user.bio,
         avatar: user.avatar,
+        profileImage: user.profileImage,
         phone: user.phone,
       },
     });
@@ -124,6 +125,7 @@ const updateProfile = async (req, res) => {
       user.phone = req.body.phone !== undefined ? req.body.phone : user.phone;
       user.bio = req.body.bio !== undefined ? req.body.bio : user.bio;
       user.avatar = req.body.avatar || user.avatar;
+      user.profileImage = req.body.profileImage || user.profileImage;
 
       if (req.body.password) {
         const salt = await bcrypt.genSalt(10);
@@ -142,6 +144,7 @@ const updateProfile = async (req, res) => {
         bio: updatedUser.bio,
         phone: updatedUser.phone,
         avatar: updatedUser.avatar,
+        profileImage: updatedUser.profileImage,
       });
     } else {
       res.status(404).json({ message: 'User not found' });
@@ -170,6 +173,7 @@ const getProfile = async (req, res) => {
         bio: user.bio,
         phone: user.phone,
         avatar: user.avatar,
+        profileImage: user.profileImage,
       });
     } else {
       res.status(404).json({ message: 'User not found' });

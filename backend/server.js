@@ -173,8 +173,10 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/activities', require('./routes/activityRoutes'));
 app.use('/api/skills', require('./routes/skillRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
-
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Message History Endpoint
 app.get('/api/messages/:projectId', async (req, res, next) => {

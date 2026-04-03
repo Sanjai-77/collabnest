@@ -306,6 +306,10 @@ const removeMember = async (req, res) => {
 
     // Remove member
     project.members = project.members.filter(m => m.toString() !== userId);
+    
+    // Add to removedUsers
+    project.removedUsers.push({ userId, removedAt: new Date() });
+    
     await project.save();
 
     // Record activity

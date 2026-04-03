@@ -30,6 +30,16 @@ const projectSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     }],
+    removedUsers: [{
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      removedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }],
   },
   {
     timestamps: true,
