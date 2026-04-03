@@ -1,11 +1,18 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const User = require('../models/User');
+
+// Ensure uploads directory exists (crucial for production servers like Render)
+const uploadDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 // Configure multer storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Uploads directory relative to backend folder
+    cb(null, uploadDir); // Uploads directory relative to backend folder
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
