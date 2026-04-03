@@ -1,24 +1,17 @@
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 const User = require('../models/User');
+const cloudinary = require('cloudinary').v2;
 
-// Ensure uploads directory exists (crucial for production servers like Render)
-const uploadDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure multer storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir); // Uploads directory relative to backend folder
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, req.user._id + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
+
+// Configure multer to use memory storage
+const storage = multer.memoryStorage();
 
 // File filter (images only)
 const fileFilter = (req, file, cb) => {
@@ -44,8 +37,17 @@ const uploadProfileImage = async (req, res) => {
       return res.status(400).json({ message: 'No image file provided' });
     }
 
-    const hostUrl = req.protocol + '://' + req.get('host');
-    const imageUrl = `${hostUrl}/uploads/${req.file.filename}`;
+    // Convert multer buffer to Base64 URI so Cloudinary can process it directly from memory
+    const b64 = Buffer.from(req.file.buffer).toString('base64');
+    let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+
+    // Upload to Cloudinary
+    const cldRes = await cloudinary.uploader.upload(dataURI, {
+      folder: 'collabnest/avatars',
+      resource_type: 'auto'
+    });
+
+    const imageUrl = cldRes.secure_url;
 
     // Update user record
     const user = await User.findById(req.user._id);
@@ -62,7 +64,7 @@ const uploadProfileImage = async (req, res) => {
     });
   } catch (error) {
     console.error('Upload profile image error:', error.message);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error: ' + error.message });
   }
 };
 

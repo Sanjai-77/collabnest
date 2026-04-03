@@ -19,6 +19,7 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [form] = Form.useForm();
   const [profile, setProfile] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const { skillOptions, loading: skillsLoading } = useSkills();
 
   useEffect(() => {
@@ -66,6 +67,7 @@ export default function ProfilePage() {
 
   const handleAvatarUpload = async (options) => {
     const { file, onSuccess, onError } = options;
+    setUploading(true);
     const formData = new FormData();
     formData.append('image', file);
     try {
@@ -79,6 +81,8 @@ export default function ProfilePage() {
       console.error('Avatar upload error:', err);
       message.error('Failed to upload image');
       onError({ err });
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -100,13 +104,14 @@ export default function ProfilePage() {
           <Card className="profile-card-premium">
             <div className="profile-hero-modern">
               <div className="profile-avatar-wrapper">
-                <Avatar size={100} src={profile.profileImage || profile.avatar} icon={<UserIcon size={40} />} className="profile-avatar-main" style={{ backgroundColor: 'var(--primary)' }} />
+                <Avatar size={100} src={profile.profileImage || profile.avatar} icon={uploading ? null : <UserIcon size={40} />} className="profile-avatar-main" style={{ backgroundColor: 'var(--primary)' }} />
                 <Upload
                   customRequest={handleAvatarUpload}
                   showUploadList={false}
                   accept="image/*"
+                  disabled={uploading}
                 >
-                  <Button icon={<Camera size={16} />} className="avatar-edit-btn" />
+                  <Button icon={uploading ? <Save size={16} className="spinner" /> : <Camera size={16} />} className="avatar-edit-btn" loading={uploading} />
                 </Upload>
               </div>
               <div className="profile-info-main">
