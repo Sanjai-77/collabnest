@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/authMiddleware');
-const { upload, uploadProfileImage } = require('../controllers/userController');
+const { upload, uploadProfileImage, updateUserProfile } = require('../controllers/userController');
 
 // Upload profile image route
-// Uses multer middleware first to process the 'image' field, then the controller logic
 router.post('/upload-profile', protect, upload.single('image'), uploadProfileImage);
+
+// Update user profile route
+router.put('/update-profile', protect, updateUserProfile);
 
 module.exports = router;

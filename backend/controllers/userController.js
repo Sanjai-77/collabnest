@@ -62,7 +62,46 @@ const uploadProfileImage = async (req, res) => {
   }
 };
 
+// @desc    Update user profile data
+// @route   PUT /api/users/update-profile
+// @access  Private
+const updateUserProfile = async (req, res) => {
+  try {
+    const { username, bio, skills, profileImage } = req.body;
+    
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update fields if provided
+    if (username) user.username = username;
+    if (bio !== undefined) user.bio = bio;
+    if (skills) user.skills = skills;
+    if (profileImage) user.profileImage = profileImage;
+
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      message: 'Profile updated successfully',
+      user: {
+        _id: updatedUser._id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        bio: updatedUser.bio,
+        skills: updatedUser.skills,
+        profileImage: updatedUser.profileImage,
+        avatar: updatedUser.avatar, // Carry over Google avatar if present
+      }
+    });
+  } catch (error) {
+    console.error('Update user profile error:', error.message);
+    res.status(500).json({ message: 'Server error: ' + error.message });
+  }
+};
+
 module.exports = {
   upload,
-  uploadProfileImage
+  uploadProfileImage,
+  updateUserProfile
 };

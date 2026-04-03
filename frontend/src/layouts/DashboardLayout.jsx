@@ -53,7 +53,16 @@ export default function DashboardLayout() {
       setIsMobile(window.innerWidth <= 768);
       if (window.innerWidth > 768) setMobileMenuOpen(false);
     };
+    
+    const handleStorageChange = () => {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        setUser(JSON.parse(userStr));
+      }
+    };
+
     window.addEventListener('resize', handleResize);
+    window.addEventListener('storage', handleStorageChange);
 
     const userStr = localStorage.getItem('user');
     if (userStr) {
@@ -69,6 +78,7 @@ export default function DashboardLayout() {
     return () => {
       socket.disconnect();
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, [navigate]);
 

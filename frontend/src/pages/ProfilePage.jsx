@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Form, Input, Select, Upload, Button, Avatar, Tag, message, Divider, Typography, Space } from 'antd';
+import { Card, Form, Input, Select, Upload, Button, Avatar, Tag, message, Divider, Typography, Space, Modal } from 'antd';
 import { Typography as MuiTypography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { 
@@ -20,6 +20,8 @@ export default function ProfilePage() {
   const [form] = Form.useForm();
   const [profile, setProfile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [newImageFile, setNewImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const { skillOptions, loading: skillsLoading } = useSkills();
 
   useEffect(() => {
@@ -44,25 +46,53 @@ export default function ProfilePage() {
 
   const handleSave = () => {
     form.validateFields().then(async (values) => {
+      setUploading(true);
       try {
-        const payload = { ...values };
-        if (payload.resume && Array.isArray(payload.resume) && payload.resume.length > 0) {
-          payload.resume = payload.resume[0].name || payload.resume[0].url || '';
-        } else if (typeof payload.resume !== 'string') {
-          payload.resume = '';
+        let profileImageUrl = profile.profileImage;
+
+        // 1. Handle image upload if a new file was selected
+        if (newImageFile) {
+          const formData = new FormData();
+          formData.append('image', newImageFile);
+          const uploadRes = await api.post('/users/upload-profile', formData);
+          profileImageUrl = uploadRes.data.profileImage;
         }
 
-        const res = await api.put('/auth/profile', payload);
+        // 2. Update profile details
+        const payload = { 
+          username: values.username,
+          bio: values.bio,
+          skills: values.skills,
+          profileImage: profileImageUrl
+        };
+
+        const res = await api.put('/users/update-profile', payload);
+        
         message.success('Profile updated successfully!');
-        const newProfile = { ...profile, ...res.data };
-        setProfile(newProfile);
-        localStorage.setItem('user', JSON.stringify(newProfile));
+        const updatedUser = { ...profile, ...res.data.user };
+        setProfile(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        
+        // Dispatch storage event to notify other tabs/layout
+        window.dispatchEvent(new Event('storage'));
+        
         setEditing(false);
+        setNewImageFile(null);
+        setPreviewUrl(null);
       } catch (error) {
         console.error('Profile update error:', error);
         message.error(error.response?.data?.message || 'Failed to update profile');
+      } finally {
+        setUploading(false);
       }
     });
+  };
+
+  const handleFileSelect = (file) => {
+    setNewImageFile(file);
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    return false; // Prevent auto-upload
   };
 
   const handleAvatarUpload = async (options) => {
@@ -141,25 +171,109 @@ export default function ProfilePage() {
 
             <Divider style={{ margin: '32px 0', borderColor: 'var(--border-color)' }} />
 
-            {editing ? (
+            <div className="profile-details-grid">
+              <div className="profile-section-item">
+                <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
+                  <ShieldCheck size={16} /> ABOUT ME
+                </MuiTypography>
+                <Paragraph className="profile-bio-text">
+                  {profile.bio || 'Add a bio to help others get to know you.'}
+                </Paragraph>
+              </div>
+
+              <div className="profile-section-item">
+                <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
+                  <Code2 size={16} /> CORE STACK
+                </MuiTypography>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                  {(profile.skills || []).map(s => (
+                    <Tag key={s} className="skill-tag-premium">{s}</Tag>
+                  ))}
+                  {(!profile.skills || profile.skills.length === 0) && <MuiTypography color="text.secondary">No skills listed yet.</MuiTypography>}
+                </div>
+              </div>
+
+              <div className="auth-grid-2" style={{ marginTop: 20 }}>
+                <div className="profile-section-item">
+                  <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
+                    <Github size={16} /> CONNECT
+                  </MuiTypography>
+                  {profile.github ? (
+                    <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer" className="auth-link" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      @{profile.github} <ExternalLink size={14} />
+                    </a>
+                  ) : (
+                    <MuiTypography color="text.secondary">Not linked</MuiTypography>
+                  )}
+                </div>
+
+                <div className="profile-section-item">
+                  <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
+                    <FileText size={16} /> DOCUMENTS
+                  </MuiTypography>
+                  {profile.resume ? (
+                    <div className="resume-tag-modern">
+                      <FileText size={14} /> {profile.resume}
+                    </div>
+                  ) : (
+                    <MuiTypography color="text.secondary">No resume uploaded</MuiTypography>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <Modal
+              title="Edit Profile"
+              open={editing}
+              onCancel={() => {
+                setEditing(false);
+                setNewImageFile(null);
+                setPreviewUrl(null);
+              }}
+              onOk={handleSave}
+              confirmLoading={uploading}
+              width={600}
+              centered
+              okText="Save Changes"
+              okButtonProps={{ className: 'auth-btn' }}
+              cancelButtonProps={{ className: 'shortcut-btn' }}
+              className="profile-edit-modal"
+            >
               <Form
                 form={form}
                 layout="vertical"
-                initialValues={{
-                  ...profile,
-                  resume: profile.resume ? [{ uid: '-1', name: profile.resume, status: 'done', url: profile.resume }] : []
-                }}
+                initialValues={profile}
                 requiredMark={false}
+                style={{ marginTop: 24 }}
               >
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
+                  <div className="profile-avatar-wrapper" style={{ position: 'relative' }}>
+                    <Avatar 
+                      size={100} 
+                      src={previewUrl || profile.profileImage || profile.avatar} 
+                      icon={<UserIcon size={40} />} 
+                      style={{ backgroundColor: 'var(--primary)' }} 
+                    />
+                    <Upload
+                      beforeUpload={handleFileSelect}
+                      showUploadList={false}
+                      accept="image/*"
+                    >
+                      <Button 
+                        icon={<Camera size={16} />} 
+                        className="avatar-edit-btn" 
+                        style={{ position: 'absolute', bottom: 0, right: 0 }}
+                      />
+                    </Upload>
+                  </div>
+                </div>
+
                 <div className="auth-grid-2">
                   <Form.Item name="username" label="Username" rules={[{ required: true }]}>
                     <Input prefix={<UserIcon size={16} className="input-icon" />} size="large" className="modern-input" />
                   </Form.Item>
                   <Form.Item name="phone" label="Phone Number">
                     <Input prefix={<Phone size={16} className="input-icon" />} size="large" className="modern-input" placeholder="+1..." />
-                  </Form.Item>
-                  <Form.Item name="github" label="GitHub Username">
-                    <Input prefix={<Github size={16} className="input-icon" />} size="large" className="modern-input" placeholder="username" />
                   </Form.Item>
                 </div>
                 
@@ -178,65 +292,8 @@ export default function ProfilePage() {
                     tokenSeparators={[',']}
                   />
                 </Form.Item>
-
-                <Form.Item name="resume" label="Curriculum Vitae (PDF)" valuePropName="fileList" getValueFromEvent={(e) => e?.fileList}>
-                  <Upload maxCount={1} beforeUpload={() => false}>
-                    <Button icon={<UploadIcon size={16} />} className="shortcut-btn">Replace Resume File</Button>
-                  </Upload>
-                </Form.Item>
               </Form>
-            ) : (
-              <div className="profile-details-grid">
-                <div className="profile-section-item">
-                  <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
-                    <ShieldCheck size={16} /> ABOUT ME
-                  </MuiTypography>
-                  <Paragraph className="profile-bio-text">
-                    {profile.bio || 'Add a bio to help others get to know you.'}
-                  </Paragraph>
-                </div>
-
-                <div className="profile-section-item">
-                  <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
-                    <Code2 size={16} /> CORE STACK
-                  </MuiTypography>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                    {(profile.skills || []).map(s => (
-                      <Tag key={s} className="skill-tag-premium">{s}</Tag>
-                    ))}
-                    {(!profile.skills || profile.skills.length === 0) && <MuiTypography color="text.secondary">No skills listed yet.</MuiTypography>}
-                  </div>
-                </div>
-
-                <div className="auth-grid-2" style={{ marginTop: 20 }}>
-                  <div className="profile-section-item">
-                    <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
-                      <Github size={16} /> CONNECT
-                    </MuiTypography>
-                    {profile.github ? (
-                      <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer" className="auth-link" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        @{profile.github} <ExternalLink size={14} />
-                      </a>
-                    ) : (
-                      <MuiTypography color="text.secondary">Not linked</MuiTypography>
-                    )}
-                  </div>
-
-                  <div className="profile-section-item">
-                    <MuiTypography variant="subtitle2" className="section-label-modern" sx={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.7, textTransform: 'uppercase', fontWeight: 700 }}>
-                      <FileText size={16} /> DOCUMENTS
-                    </MuiTypography>
-                    {profile.resume ? (
-                      <div className="resume-tag-modern">
-                        <FileText size={14} /> {profile.resume}
-                      </div>
-                    ) : (
-                      <MuiTypography color="text.secondary">No resume uploaded</MuiTypography>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
+            </Modal>
           </Card>
         </motion.div>
       </motion.div>
