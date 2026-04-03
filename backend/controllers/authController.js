@@ -52,6 +52,7 @@ const registerUser = async (req, res) => {
         resume: user.resume,
         bio: user.bio,
         phone: user.phone,
+        profileImage: user.profileImage || '',
       },
     });
   } catch (error) {
@@ -103,6 +104,7 @@ const loginUser = async (req, res) => {
         phone: user.phone,
       },
     });
+    console.log(`[DEBUG] Login successful for user: ${user.email}, profileImage: ${user.profileImage}`);
   } catch (error) {
     console.error('Login error:', error.message);
     res.status(500).json({ message: 'Server error' });
@@ -250,8 +252,10 @@ const googleLogin = async (req, res) => {
         resume: user.resume,
         bio: user.bio,
         phone: user.phone,
+        profileImage: user.profileImage || '',
       },
     });
+    console.log(`[DEBUG] Google Login successful for user: ${user.email}, profileImage: ${user.profileImage}`);
   } catch (error) {
     console.error('Google login error details:', error);
     res.status(401).json({ message: 'Invalid Google token' });
