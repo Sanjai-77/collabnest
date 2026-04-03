@@ -69,9 +69,7 @@ export default function ProfilePage() {
     const formData = new FormData();
     formData.append('image', file);
     try {
-      const res = await api.post('/users/upload-profile', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await api.post('/users/upload-profile', formData);
       const newProfile = { ...profile, profileImage: res.data.profileImage };
       setProfile(newProfile);
       localStorage.setItem('user', JSON.stringify(newProfile));
