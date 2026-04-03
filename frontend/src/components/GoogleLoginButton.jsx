@@ -10,6 +10,13 @@ const GoogleLoginButton = () => {
 
   const handleSuccess = async (credentialResponse) => {
     setAuthenticating(true);
+    console.log('Google login success response received from Google');
+    
+    // Check if client ID is missing in frontend env
+    if (!import.meta.env.VITE_GOOGLE_CLIENT_ID) {
+      console.error('VITE_GOOGLE_CLIENT_ID is not defined in the frontend environment!');
+    }
+
     try {
       const res = await api.post('/auth/google', { idToken: credentialResponse.credential });
       localStorage.setItem('token', res.data.token);
@@ -17,7 +24,7 @@ const GoogleLoginButton = () => {
       message.success('Google login successful!');
       navigate('/dashboard');
     } catch (error) {
-      console.error('Google login error:', error);
+      console.error('Google login error details from backend:', error.response?.data || error.message);
       message.error(error.response?.data?.message || 'Google login failed');
     } finally {
       setAuthenticating(false);

@@ -195,10 +195,16 @@ const googleLogin = async (req, res) => {
       return res.status(400).json({ message: 'No Google token provided' });
     }
 
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      console.error('GOOGLE_CLIENT_ID is not defined in the backend environment!');
+      return res.status(500).json({ message: 'Backend configuration error: GOOGLE_CLIENT_ID missing' });
+    }
+
     // Verify token
     const ticket = await client.verifyIdToken({
       idToken,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: clientId,
     });
 
     const payload = ticket.getPayload();
